@@ -1,0 +1,5 @@
+calcifer:
+    resource: "@CalciferBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
