@@ -1,49 +1,36 @@
 {% extends 'CalciferBundle::layout.html.twig' %}
 
+{% block css %}
+    {% stylesheets filter="compass"
+        "@CalciferBundle/Resources/assets/css/events.scss"
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+    "@CalciferBundle/Resources/assets/js/events.js"
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
 {% block body -%}
-    <h1>Event list</h1>
+    <div class="ui one column page grid title">
+        <div class="ui column">
+            <h1>
+                Termine
+                {% if tag|default(false) %} für Tag „{{ tag.name }}“{% endif %}
+                {% if location|default(false) %} für Ort „{{ location.name }}{% endif %}
+            </h1>
+        </div>
+    </div>
 
-    <table class="records_list table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Startdate</th>
-                <th>Enddate</th>
-                <th>Summary</th>
-                <th>Description</th>
-                <th>Url</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="ui three column page grid">
         {% for entity in entities %}
-            <tr>
-                <td><a href="{{ path('_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.startdate }}</td>
-                <td>{{ entity.enddate }}</td>
-                <td>{{ entity.summary }}</td>
-                <td>{{ entity.description }}</td>
-                <td>{{ entity.url }}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
+            {{ include('CalciferBundle:Event:event_box.html.twig',{'truncate_summary':true}) }}
         {% endfor %}
-        </tbody>
-    </table>
+    </div>
 
-        <ul>
-        <li>
-            <a href="{{ path('_new') }}">
-                Create a new entry
-            </a>
-        </li>
-    </ul>
-    {% endblock %}
+{% endblock %}

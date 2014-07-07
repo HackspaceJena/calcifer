@@ -3,6 +3,7 @@
 namespace Hackspace\Bundle\CalciferBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 
 /**
  * Event
@@ -45,7 +46,7 @@ class Event
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="string", length=255, nullable=true)
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
     private $description;
 
@@ -59,7 +60,7 @@ class Event
     /**
      * @var Location
      *
-     * @ORM\OneToOne(targetEntity="Location")
+     * @ORM\ManyToOne(targetEntity="Location")
      * @ORM\JoinColumn(name="locations_id", referencedColumnName="id")
      */
     private $location;
@@ -74,13 +75,13 @@ class Event
     /**
      * @var array
      *
-     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="features")
+     * @ORM\ManyToMany(targetEntity="Tag")
      * @ORM\JoinTable(name="events2tags",
      *      joinColumns={@ORM\JoinColumn(name="events_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="tags_id", referencedColumnName="id")}
      *      )
      */
-    private $tags;
+    private $tags = [];
 
 
     /**
@@ -253,7 +254,37 @@ class Event
         return $this->tags;
     }
 
+    public function hasTag(Tag $tag) {
+        if ($this->tags instanceof PersistentCollection) {
+            return $this->tags->contains($tag);
+        } elseif (is_array($this->tags)) {
+            return in_array($tag,$this->tags);
+        } else {
+            return false;
+        }
+
+    }
+
+    public function addTag(Tag $tag) {
+        /** @var PersistentCollection $this->tags */
+        if (!$this->hasTag($tag)) {
+            $this->tags[] = $tag;
+        }
+    }
+
     public function isValid() {
-        return false;
+        return true;
+    }
+
+    public function getTagsAsText() {
+        if (count($this->tags) > 0) {
+            $tags = [];
+            foreach ($this->tags as $tag) {
+                $tags[] = $tag->getName();
+            }
+            return implode(',',$tags);
+        } else {
+            return '';
+        }
     }
 }

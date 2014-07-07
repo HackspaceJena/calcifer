@@ -1,16 +1,31 @@
 {% extends 'CalciferBundle::layout.html.twig' %}
 
+{% block css %}
+    {% stylesheets filter="compass"
+    "@CalciferBundle/Resources/assets/css/jquery.datetimepicker.scss" %}
+    <link rel="stylesheet" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+    "@CalciferBundle/Resources/assets/js/jquery.datetimepicker.js"
+    "@CalciferBundle/Resources/assets/js/events.js" %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
 {% block body -%}
-    <h1>Event edit</h1>
+    <div class="ui one column page grid">
+        <div class="ui column">
+            <h1>Termin bearbeiten</h1>
+        </div>
+    </div>
 
-    {{ form(edit_form) }}
+    <div class="ui one column page grid">
+        <div class="ui column">
+            {{ include('CalciferBundle:Event:event_form.html.twig',{'entity':entity}) }}
+        </div>
+    </div>
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
 {% endblock %}

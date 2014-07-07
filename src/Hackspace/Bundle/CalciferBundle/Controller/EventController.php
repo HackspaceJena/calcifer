@@ -2,6 +2,9 @@
 
 namespace Hackspace\Bundle\CalciferBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
+use Hackspace\Bundle\CalciferBundle\Entity\Location;
+use Hackspace\Bundle\CalciferBundle\Entity\Tag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -29,7 +32,7 @@ class EventController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('CalciferBundle:Event')->findAll();
+        $entities = $em->getRepository('CalciferBundle:Event')->findBy([],['startdate' => 'ASC']);
 
         return array(
             'entities' => $entities,
@@ -49,6 +52,52 @@ class EventController extends Controller
         $entity->setSummary($request->get('summary'));
         $entity->setUrl($request->get('url'));
         $startdate = $request->get('startdate');
+        $startdate = new \DateTime($startdate);
+        $entity->setStartdate($startdate);
+
+        $enddate = $request->get('enddate');
+        if (strlen($enddate) > 0) {
+            $enddate = new \DateTime($enddate);
+            $entity->setenddate($enddate);
+        }
+
+        $location = $request->get('location');
+        if (strlen($location) > 0) {
+            // check if the location already exists
+            /** @var EntityManager $em */
+            $em = $this->getDoctrine()->getManager();
+            $repo = $em->getRepository('CalciferBundle:Location');
+            $results = $repo->findBy(['name' => $location]);
+            if (count($results) > 0) {
+                $entity->setLocation($results[0]);
+            } else {
+                $location_obj = new Location();
+                $location_obj->setName($location);
+                $em->persist($location_obj);
+                $em->flush();
+                $entity->setLocation($location_obj);
+            }
+        }
+
+        $tags = $request->get('tags');
+        if (strlen($tags) > 0) {
+            $tags = explode(',',$tags);
+            $em = $this->getDoctrine()->getManager();
+            $repo = $em->getRepository('CalciferBundle:Tag');
+            foreach ($tags as $tag) {
+                $tag = trim($tag);
+                $results = $repo->findBy(['name' => $tag]);
+                if (count($results) > 0) {
+                    $entity->addTag($results[0]);
+                } else {
+                    $tag_obj = new Tag();
+                    $tag_obj->setName($tag);
+                    $em->persist($tag_obj);
+                    $em->flush();
+                    $entity->addTag($tag_obj);
+                }
+            }
+        }
 
 
         if ($entity->isValid()) {
@@ -65,25 +114,6 @@ class EventController extends Controller
     }
 
     /**
-     * Creates a form to create a Event entity.
-     *
-     * @param Event $entity The entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createCreateForm(Event $entity)
-    {
-        $form = $this->createForm(new EventType(), $entity, array(
-            'action' => $this->generateUrl('_create'),
-            'method' => 'POST',
-        ));
-
-        $form->add('submit', 'submit', array('label' => 'Create'));
-
-        return $form;
-    }
-
-    /**
      * Displays a form to create a new Event entity.
      *
      * @Route("/new", name="_new")
@@ -93,11 +123,9 @@ class EventController extends Controller
     public function newAction()
     {
         $entity = new Event();
-        $form   = $this->createCreateForm($entity);
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
         );
     }
 
@@ -118,11 +146,8 @@ class EventController extends Controller
             throw $this->createNotFoundException('Unable to find Event entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
+            'entity'      => $entity
         );
     }
 
@@ -143,107 +168,92 @@ class EventController extends Controller
             throw $this->createNotFoundException('Unable to find Event entity.');
         }
 
-        $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
-
         return array(
             'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         );
     }
 
     /**
-    * Creates a form to edit a Event entity.
-    *
-    * @param Event $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
-    private function createEditForm(Event $entity)
-    {
-        $form = $this->createForm(new EventType(), $entity, array(
-            'action' => $this->generateUrl('_update', array('id' => $entity->getId())),
-            'method' => 'PUT',
-        ));
-
-        $form->add('submit', 'submit', array('label' => 'Update'));
-
-        return $form;
-    }
-    /**
      * Edits an existing Event entity.
      *
      * @Route("/{id}", name="_update")
-     * @Method("PUT")
+     * @Method("POST")
      * @Template("CalciferBundle:Event:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
+        /** @var Event $entity */
         $entity = $em->getRepository('CalciferBundle:Event')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Event entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($entity);
-        $editForm->handleRequest($request);
+        $entity->setDescription($request->get('description'));
+        $entity->setSummary($request->get('summary'));
+        $entity->setUrl($request->get('url'));
+        $startdate = $request->get('startdate');
+        $startdate = new \DateTime($startdate);
+        $entity->setStartdate($startdate);
 
-        if ($editForm->isValid()) {
+        $enddate = $request->get('enddate');
+        if (strlen($enddate) > 0) {
+            $enddate = new \DateTime($enddate);
+            $entity->setenddate($enddate);
+        }
+
+        $location = $request->get('location');
+        if (strlen($location) > 0) {
+            // check if the location already exists
+            /** @var EntityManager $em */
+            $em = $this->getDoctrine()->getManager();
+            $repo = $em->getRepository('CalciferBundle:Location');
+            $results = $repo->findBy(['name' => $location]);
+            if (count($results) > 0) {
+                $entity->setLocation($results[0]);
+            } else {
+                $location_obj = new Location();
+                $location_obj->setName($location);
+                $em->persist($location_obj);
+                $em->flush();
+                $entity->setLocation($location_obj);
+            }
+        }
+
+        $tags = $request->get('tags');
+        if (strlen($tags) > 0) {
+            $tags = explode(',',$tags);
+            $em = $this->getDoctrine()->getManager();
+            $repo = $em->getRepository('CalciferBundle:Tag');
+            foreach ($tags as $tag) {
+                $tag = trim($tag);
+                $results = $repo->findBy(['name' => $tag]);
+                if (count($results) > 0) {
+                    $entity->addTag($results[0]);
+                } else {
+                    $tag_obj = new Tag();
+                    $tag_obj->setName($tag);
+                    $em->persist($tag_obj);
+                    $em->flush();
+                    $entity->addTag($tag_obj);
+                }
+            }
+        }
+
+
+        if ($entity->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('_show', array('id' => $entity->getId())));
         }
 
         return array(
             'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+
         );
-    }
-    /**
-     * Deletes a Event entity.
-     *
-     * @Route("/{id}", name="_delete")
-     * @Method("DELETE")
-     */
-    public function deleteAction(Request $request, $id)
-    {
-        $form = $this->createDeleteForm($id);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('CalciferBundle:Event')->find($id);
-
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Event entity.');
-            }
-
-            $em->remove($entity);
-            $em->flush();
-        }
-
-        return $this->redirect($this->generateUrl(''));
-    }
-
-    /**
-     * Creates a form to delete a Event entity by id.
-     *
-     * @param mixed $id The entity id
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
-        ;
     }
 }
