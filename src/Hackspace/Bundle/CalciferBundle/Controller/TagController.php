@@ -22,6 +22,7 @@ use Jsvrcek\ICS\Model\Relationship\Organizer;
 use Jsvrcek\ICS\Utility\Formatter;
 use Jsvrcek\ICS\CalendarStream;
 use Jsvrcek\ICS\CalendarExport;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Tag controller.
@@ -53,7 +54,9 @@ class TagController extends Controller
         $qb ->select(array('e'))
             ->from('CalciferBundle:Event', 'e')
             ->join('e.tags', 't', 'WITH', $qb->expr()->in('t.id', $tag->getId()))
-            ->orderBy('e.startdate');
+            ->where('e.startdate >= :startdate')
+            ->orderBy('e.startdate')
+            ->setParameter('startdate',new \DateTime());
         $entities = $qb->getQuery()->execute();
 
         return array(

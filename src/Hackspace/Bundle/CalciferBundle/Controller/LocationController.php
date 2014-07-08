@@ -2,7 +2,7 @@
 
 namespace Hackspace\Bundle\CalciferBundle\Controller;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
 use Hackspace\Bundle\CalciferBundle\Entity\Location;
 use Hackspace\Bundle\CalciferBundle\Entity\Tag;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,7 +50,16 @@ class LocationController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('CalciferBundle:Event')->findBy(['locations_id' => $location->getId()],['startdate' => 'ASC']);
+        /** @var QueryBuilder $qb */
+        $qb = $em->createQueryBuilder();
+        $qb ->select(array('e'))
+            ->from('CalciferBundle:Event', 'e')
+            ->where('e.startdate >= :startdate')
+            ->andWhere('e.locations_id = :location')
+            ->orderBy('e.startdate')
+            ->setParameter('startdate',new \DateTime())
+            ->setParameter('location',$location->getId());
+        $entities = $qb->getQuery()->execute();
 
         return array(
             'entities' => $entities,

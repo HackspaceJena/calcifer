@@ -3,6 +3,7 @@
 namespace Hackspace\Bundle\CalciferBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
 use Hackspace\Bundle\CalciferBundle\Entity\Location;
 use Hackspace\Bundle\CalciferBundle\Entity\Tag;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +33,14 @@ class EventController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('CalciferBundle:Event')->findBy([],['startdate' => 'ASC']);
+        /** @var QueryBuilder $qb */
+        $qb = $em->createQueryBuilder();
+        $qb ->select(array('e'))
+            ->from('CalciferBundle:Event', 'e')
+            ->where('e.startdate >= :startdate')
+            ->orderBy('e.startdate')
+            ->setParameter('startdate',new \DateTime());
+        $entities = $qb->getQuery()->execute();
 
         return array(
             'entities' => $entities,
