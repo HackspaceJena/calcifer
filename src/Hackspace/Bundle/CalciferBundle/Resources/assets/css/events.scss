@@ -29,3 +29,11 @@
     }
   }
 }
+
+form .ui.form {
+  .field {
+    .attached-label > input, .attached-label > textarea {
+      margin-bottom: 2rem;
+    }
+  }
+}

@@ -54,8 +54,9 @@
         <div class="field">
             <label class="control-label required" for="event_summary">Beschreibung</label>
 
-            <div class="ui left labeled icon input">
+            <div class="ui left labeled icon input attached-label">
                 <textarea name="description">{{ entity.description|default('') }}</textarea>
+                <div class="ui bottom attached label">Du kannst hier <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a> benutzen.</div>
             </div>
         </div>
 
@@ -91,13 +92,14 @@
         <div class="field">
             <label class="" for="event_tags">Tags</label>
 
-            <div class="ui left labeled icon input">
+            <div class="ui left icon input attached-label">
                 <input type="text"
                        id="event_tags"
                        name="tags"
                        value="{{ entity.getTagsAsText() }}"
                        class="form-control">
                 <i class="icon tag"></i>
+                <div class="ui bottom attached label">Du kannst hier kommasepariert <a href="https://en.wikipedia.org/wiki/Tag_%28metadata%29">Tags</a> angeben.</div>
             </div>
         </div>
 
