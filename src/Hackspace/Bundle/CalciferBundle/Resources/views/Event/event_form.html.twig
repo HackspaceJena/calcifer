@@ -77,15 +77,37 @@
         <div class="field">
             <label class="control-label required" for="event_location">Ort</label>
 
-            <div class="ui left labeled icon input">
+            <div class="ui left labeled icon input attached-label">
                 <input type="text"
                        id="event_location"
                        name="location"
                        maxlength="255"
                        value="{{ entity.location.name|default('') }}"
                        class="form-control">
+                <input type="hidden" name="location_lat">
+                <input type="hidden" name="location_lon">
                 <i class="icon map marker"></i>
-
+                <div class="ui bottom attached label">
+                    Du kannst zu diesem Ort auch Geokoordinaten <a href="#" class="add_geo">hinterlegen</a>.<br />
+                    <span class="coords"></span>
+                </div>
+                <div class="ui modal geo chooser">
+                    <i class="close icon"></i>
+                    <div class="header">
+                        Wähle einen Punkt auf der Karte
+                    </div>
+                    <div class="content">
+                        <div id="map"></div>
+                    </div>
+                    <div class="actions">
+                        <div class="ui button cancel">
+                            Cancel
+                        </div>
+                        <div class="ui button ok">
+                            Okay
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

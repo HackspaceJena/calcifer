@@ -70,6 +70,8 @@ class EventController extends Controller
         }
 
         $location = $request->get('location');
+        $location_lat = $request->get('location_lat');
+        $location_lon = $request->get('location_lon');
         if (strlen($location) > 0) {
             // check if the location already exists
             /** @var EntityManager $em */
@@ -77,10 +79,17 @@ class EventController extends Controller
             $repo = $em->getRepository('CalciferBundle:Location');
             $results = $repo->findBy(['name' => $location]);
             if (count($results) > 0) {
+                $location_obj = $results[0];
+                $location_obj->setLat($location_lat);
+                $location_obj->setLon($location_lon);
+                $em->persist($location_obj);
+                $em->flush();
                 $entity->setLocation($results[0]);
             } else {
                 $location_obj = new Location();
                 $location_obj->setName($location);
+                $location_obj->setLat($location_lat);
+                $location_obj->setLon($location_lon);
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($location_obj);
@@ -213,6 +222,8 @@ class EventController extends Controller
         }
 
         $location = $request->get('location');
+        $location_lat = $request->get('location_lat');
+        $location_lon = $request->get('location_lon');
         if (strlen($location) > 0) {
             // check if the location already exists
             /** @var EntityManager $em */
@@ -220,10 +231,17 @@ class EventController extends Controller
             $repo = $em->getRepository('CalciferBundle:Location');
             $results = $repo->findBy(['name' => $location]);
             if (count($results) > 0) {
+                $location_obj = $results[0];
+                $location_obj->setLat($location_lat);
+                $location_obj->setLon($location_lon);
+                $em->persist($location_obj);
+                $em->flush();
                 $entity->setLocation($results[0]);
             } else {
                 $location_obj = new Location();
                 $location_obj->setName($location);
+                $location_obj->setLat($location_lat);
+                $location_obj->setLon($location_lon);
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($location_obj);
