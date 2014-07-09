@@ -77,19 +77,19 @@
         <div class="field">
             <label class="control-label required" for="event_location">Ort</label>
 
-            <div class="ui left labeled icon input attached-label">
+            <div class="ui left labeled icon input attached-{% if entity.location.lat|default(0) > 0 %}geo-{% endif %}label">
                 <input type="text"
                        id="event_location"
                        name="location"
                        maxlength="255"
                        value="{{ entity.location.name|default('') }}"
                        class="form-control">
-                <input type="hidden" name="location_lat">
-                <input type="hidden" name="location_lon">
+                <input type="hidden" name="location_lat" value="{{ entity.location.lat|default('') }}">
+                <input type="hidden" name="location_lon" value="{{ entity.location.lon|default('') }}">
                 <i class="icon map marker"></i>
                 <div class="ui bottom attached label">
                     Du kannst zu diesem Ort auch Geokoordinaten <a href="#" class="add_geo">hinterlegen</a>.<br />
-                    <span class="coords"></span>
+                    <span class="coords">{% if entity.location.lat|default(0) > 0 %}Folgende Koordinaten sind angegeben: lat:{{ entity.location.lat }}, lon:{{ entity.location.lon }}{% endif %}</span>
                 </div>
                 <div class="ui modal geo chooser">
                     <i class="close icon"></i>
