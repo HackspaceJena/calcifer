@@ -1,12 +1,12 @@
-/* line 2, assetic_compasslCISQS.scss */
+/* line 2, assetic_compasscXEbLP.scss */
 .event.box h2 {
   padding: 0.5rem;
 }
-/* line 4, assetic_compasslCISQS.scss */
+/* line 4, assetic_compasscXEbLP.scss */
 .event.box h2 a, .event.box h2 a:hover, .event.box h2 a:visited {
   color: #ffffff;
 }
-/* line 9, assetic_compasslCISQS.scss */
+/* line 9, assetic_compasscXEbLP.scss */
 .event.box .startdate, .event.box .location, .event.box .url, .event.box .edit {
   /*float: left;*/
   display: inline;
@@ -14,7 +14,7 @@
   margin-right: 0.5rem;
   margin-bottom: 0.5rem;
 }
-/* line 17, assetic_compasslCISQS.scss */
+/* line 17, assetic_compasscXEbLP.scss */
 .event.box ul.tags {
   padding-left: 0;
   /*float: left;*/
@@ -23,7 +23,7 @@
   margin-bottom: 0.5rem;
   display: inline;
 }
-/* line 24, assetic_compasslCISQS.scss */
+/* line 24, assetic_compasscXEbLP.scss */
 .event.box ul.tags li {
   list-style-type: none;
   /*float: left;*/
@@ -31,7 +31,12 @@
   margin-right: 0.5rem;
 }
 
-/* line 35, assetic_compasslCISQS.scss */
+/* line 35, assetic_compasscXEbLP.scss */
 form .ui.form .field .attached-label > input, form .ui.form .field .attached-label > textarea {
   margin-bottom: 2rem;
+}
+
+/* line 41, assetic_compasscXEbLP.scss */
+#map {
+  height: 20rem;
 }
