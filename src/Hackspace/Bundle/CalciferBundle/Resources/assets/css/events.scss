@@ -7,7 +7,6 @@
   }
 
   .startdate,.location,.url,.edit {
-    /*float: left;*/
     display: inline;
     margin: 0;
     margin-right: 0.5rem;
@@ -16,14 +15,12 @@
 
   ul.tags {
     padding-left: 0;
-    /*float: left;*/
     margin: 0;
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
     display: inline;
     li {
       list-style-type: none;
-      /*float: left;*/
       display: inline;
       margin-right: 0.5rem;
     }
