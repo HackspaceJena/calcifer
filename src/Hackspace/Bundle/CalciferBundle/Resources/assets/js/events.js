@@ -8,9 +8,9 @@ function addGeoCoordinates(ev) {
     return false;
 }
 var map = null;
-$(document).ready(function () {
-    if ($('.icon.link').length > 0) {
-        $('.icon.link').popup();
+jQuery(document).ready(function () {
+    if (jQuery('.icon.link').length > 0) {
+        jQuery('.icon.link').popup();
     }
 
     if (jQuery('input[type=datetime]').length > 0) {
@@ -18,7 +18,7 @@ $(document).ready(function () {
     }
 
     if (jQuery('#map').length == 1) {
-        $('.add_geo').click(addGeoCoordinates);
+        jQuery('.add_geo').click(addGeoCoordinates);
         map = L.map('map');
 
         // add an OpenStreetMap tile layer
@@ -42,22 +42,22 @@ $(document).ready(function () {
 
         map.on('click', onMapClick);
 
-        $('.geo.chooser').modal('setting', {
+        jQuery('.geo.chooser').modal('setting', {
             closable: false,
             onApprove: function () {
                 var coords = marker.getLatLng();
-                $('input[name=location_lat]').val(coords.lat);
-                $('input[name=location_lon]').val(coords.lng);
-                $('input[name=location]').css('margin-bottom', '3.2rem');
-                $('span.coords').text('Folgende Koordinaten sind angegeben: lat:' + coords.lat + ', lon:' + coords.lng);
+                jQuery('input[name=location_lat]').val(coords.lat);
+                jQuery('input[name=location_lon]').val(coords.lng);
+                jQuery('input[name=location]').css('margin-bottom', '3.2rem');
+                jQuery('span.coords').text('Folgende Koordinaten sind angegeben: lat:' + coords.lat + ', lon:' + coords.lng);
             },
             onDeny: function () {
 
             },
             onVisible: function () {
                 map.invalidateSize(true);
-                var lat = parseFloat($('input[name=location_lat]').val());
-                var lon = parseFloat($('input[name=location_lon]').val());
+                var lat = parseFloat(jQuery('input[name=location_lat]').val());
+                var lon = parseFloat(jQuery('input[name=location_lon]').val());
                 if ((lat > 0) && (lon > 0)) {
                     map.setView([lat, lon], 16);
                     var latlng = new L.LatLng(lat, lon);
