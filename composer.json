@@ -33,7 +33,10 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "jquery/jquery":  "1.10.*",
         "knplabs/knp-markdown-bundle": "~1.3",
-        "jsvrcek/ics": "dev-master"
+        "jsvrcek/ics": "dev-master",
+        "doctrine/migrations": "dev-master",
+        "doctrine/doctrine-migrations-bundle": "dev-master",
+        "jbroadway/urlify" : "~1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
