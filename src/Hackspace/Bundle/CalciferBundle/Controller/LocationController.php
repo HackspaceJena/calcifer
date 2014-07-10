@@ -2,6 +2,8 @@
 
 namespace Hackspace\Bundle\CalciferBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Hackspace\Bundle\CalciferBundle\Entity\Location;
 use Hackspace\Bundle\CalciferBundle\Entity\Tag;
@@ -26,23 +28,27 @@ use Symfony\Component\Validator\Constraints\DateTime;
 /**
  * Location controller.
  *
- * @Route("/locations")
+ * @Route("/orte")
  */
 class LocationController extends Controller
 {
     /**
      * Finds and displays a Event entity.
      *
-     * @Route("/{id}", requirements={"id" = "\d+"}, name="location_show")
+     * @Route("/{slug}", name="location_show")
      * @Method("GET")
      * @Template("CalciferBundle:Event:index.html.twig")
      */
-    public function showAction($id)
+    public function showAction($slug)
     {
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:Location');
+
         /** @var Location $location */
-        $location = $em->getRepository('CalciferBundle:Location')->find($id);
+        $location = $repo->findOneBy(['slug' => $slug]);
 
         if (!$location) {
             throw $this->createNotFoundException('Unable to find Location entity.');

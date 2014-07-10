@@ -28,6 +28,28 @@ class Tag
      */
     private $name;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="slug", type="string", length=255,options={"default" = ""})
+     */
+    private $slug = '';
+
+    /**
+     * @param string $slug
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
 
     /**
      * Get id

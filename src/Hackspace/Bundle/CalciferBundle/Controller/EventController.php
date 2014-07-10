@@ -3,6 +3,7 @@
 namespace Hackspace\Bundle\CalciferBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Hackspace\Bundle\CalciferBundle\Entity\Location;
 use Hackspace\Bundle\CalciferBundle\Entity\Tag;
@@ -49,7 +50,7 @@ class EventController extends Controller
     /**
      * Creates a new Event entity.
      *
-     * @Route("/", name="_create")
+     * @Route("/termine/", name="_create")
      * @Method("POST")
      * @Template("CalciferBundle:Event:new.html.twig")
      */
@@ -62,6 +63,7 @@ class EventController extends Controller
         $startdate = $request->get('startdate');
         $startdate = new \DateTime($startdate);
         $entity->setStartdate($startdate);
+        $entity->setSlug(\URLify::filter($entity->getSummary(),255,'de'));
 
         $enddate = $request->get('enddate');
         if (strlen($enddate) > 0) {
@@ -90,6 +92,7 @@ class EventController extends Controller
                 $location_obj->setName($location);
                 $location_obj->setLat($location_lat);
                 $location_obj->setLon($location_lon);
+                $location_obj->setSlug(\URLify::filter($location_obj->getName(),255,'de'));
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($location_obj);
@@ -109,6 +112,7 @@ class EventController extends Controller
                 } else {
                     $tag_obj = new Tag();
                     $tag_obj->setName($tag);
+                    $tag_obj->setSlug(\URLify::filter($tag_obj->getName(),255,'de'));
                     $em->persist($tag_obj);
                     $em->flush();
                     $entity->addTag($tag_obj);
@@ -122,7 +126,7 @@ class EventController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('_show', array('slug' => $entity->getSlug())));
         }
 
         return array(
@@ -133,7 +137,7 @@ class EventController extends Controller
     /**
      * Displays a form to create a new Event entity.
      *
-     * @Route("/new", name="_new")
+     * @Route("/termine/neu", name="_new")
      * @Method("GET")
      * @Template()
      */
@@ -149,15 +153,20 @@ class EventController extends Controller
     /**
      * Finds and displays a Event entity.
      *
-     * @Route("/{id}", name="_show")
+     * @Route("/termine/{slug}", name="_show")
      * @Method("GET")
      * @Template()
      */
-    public function showAction($id)
+    public function showAction($slug)
     {
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('CalciferBundle:Event')->find($id);
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:Event');
+
+        /** @var Event $entity */
+        $entity = $repo->findOneBy(['slug' => $slug]);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Event entity.');
@@ -171,15 +180,20 @@ class EventController extends Controller
     /**
      * Displays a form to edit an existing Event entity.
      *
-     * @Route("/{id}/edit", name="_edit")
+     * @Route("/termine/{slug}/edit", name="_edit")
      * @Method("GET")
      * @Template()
      */
-    public function editAction($id)
+    public function editAction($slug)
     {
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('CalciferBundle:Event')->find($id);
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:Event');
+
+        /** @var Event $entity */
+        $entity = $repo->findOneBy(['slug' => $slug]);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Event entity.');
@@ -193,16 +207,20 @@ class EventController extends Controller
     /**
      * Edits an existing Event entity.
      *
-     * @Route("/{id}", name="_update")
+     * @Route("/termine/{slug}", name="_update")
      * @Method("POST")
      * @Template("CalciferBundle:Event:edit.html.twig")
      */
-    public function updateAction(Request $request, $id)
+    public function updateAction(Request $request, $slug)
     {
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:Event');
+
         /** @var Event $entity */
-        $entity = $em->getRepository('CalciferBundle:Event')->find($id);
+        $entity = $repo->findOneBy(['slug' => $slug]);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Event entity.');
@@ -214,6 +232,7 @@ class EventController extends Controller
         $startdate = $request->get('startdate');
         $startdate = new \DateTime($startdate);
         $entity->setStartdate($startdate);
+        $entity->setSlug(\URLify::filter($entity->getSummary(),255,'de'));
 
         $enddate = $request->get('enddate');
         if (strlen($enddate) > 0) {
@@ -242,6 +261,7 @@ class EventController extends Controller
                 $location_obj->setName($location);
                 $location_obj->setLat($location_lat);
                 $location_obj->setLon($location_lon);
+                $location_obj->setSlug(\URLify::filter($location_obj->getName(),255,'de'));
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($location_obj);
@@ -261,6 +281,7 @@ class EventController extends Controller
                 } else {
                     $tag_obj = new Tag();
                     $tag_obj->setName($tag);
+                    $tag_obj->setSlug(\URLify::filter($tag_obj->getName(),255,'de'));
                     $em->persist($tag_obj);
                     $em->flush();
                     $entity->addTag($tag_obj);
@@ -274,7 +295,7 @@ class EventController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('_show', array('slug' => $entity->getSlug())));
         }
 
         return array(

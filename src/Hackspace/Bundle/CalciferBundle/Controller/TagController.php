@@ -3,6 +3,7 @@
 namespace Hackspace\Bundle\CalciferBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Hackspace\Bundle\CalciferBundle\Entity\Location;
 use Hackspace\Bundle\CalciferBundle\Entity\Tag;
@@ -34,16 +35,20 @@ class TagController extends Controller
     /**
      * Finds and displays a Event entity.
      *
-     * @Route("/{id}", requirements={"id" = "\d+"}, name="tag_show")
+     * @Route("/{slug}", name="tag_show")
      * @Method("GET")
      * @Template("CalciferBundle:Event:index.html.twig")
      */
-    public function showAction($id)
+    public function showAction($slug)
     {
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
-        /** @var Tag $tag */
-        $tag = $em->getRepository('CalciferBundle:Tag')->find($id);
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:Tag');
+
+        /** @var Tag $location */
+        $tag = $repo->findOneBy(['slug' => $slug]);
 
         if (!$tag) {
             throw $this->createNotFoundException('Unable to find tag entity.');

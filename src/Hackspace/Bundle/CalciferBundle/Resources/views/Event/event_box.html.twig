@@ -1,10 +1,10 @@
 <div class="ui column">
     <div class="ui segment event box">
-        <h2 class="ui dividing header segment green inverted"><a href="{{ path('_show', { 'id': entity.id }) }}">{{ entity.summary }}</a>
+        <h2 class="ui dividing header segment green inverted"><a href="{{ path('_show', { 'slug': entity.slug }) }}">{{ entity.summary }}</a>
         </h2>
 
         <p class="edit">
-            <a href="{{ path('_edit', {'id' : entity.id}) }}"><i class="ui icon edit circular green inverted"></i>Bearbeiten</a>
+            <a href="{{ path('_edit', {'slug' : entity.slug }) }}"><i class="ui icon edit circular green inverted"></i>Bearbeiten</a>
         </p>
 
         <p class="startdate ">
@@ -13,13 +13,13 @@
 
         {% if entity.location is not null %}
             <p class="location">
-                <a href="{{ path('location_show', {'id' : entity.location.id}) }}"><i class="ui icon map marker circular green inverted link" title="Wo?" data-content="Wo?"></i>{{ entity.location.name }}</a>
+                <a href="{{ path('location_show', {'slug' : entity.location.slug }) }}"><i class="ui icon map marker circular green inverted link" title="Wo?" data-content="Wo?"></i>{{ entity.location.name }}</a>
             </p>
         {% endif %}
         {% if entity.tags|length > 0 %}
             <ul class="tags">
                 {% for tag in entity.tags %}
-                    <li class="tag"><a href="{{ path('tag_show',{'id' : tag.id}) }}"><i class="circular icon tag green inverted"></i>{{ tag.name }}</a></li>
+                    <li class="tag"><a href="{{ path('tag_show',{'slug' : tag.slug }) }}"><i class="circular icon tag green inverted"></i>{{ tag.name }}</a></li>
                 {% endfor %}
             </ul>
         {% endif %}
