@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <div class="ui three column page grid">
+    <div class="ui three column page grid stackable">
         {% for entity in entities %}
             {{ include('CalciferBundle:Event:event_box.html.twig',{'truncate_summary':true}) }}
         {% endfor %}
