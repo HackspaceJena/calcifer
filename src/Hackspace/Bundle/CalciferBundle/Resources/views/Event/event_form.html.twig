@@ -1,4 +1,4 @@
-<form method="post" action="{% if entity.id > 0 %}{{ path('_update',{'id':entity.id}) }}{% else %}{{ path('_create') }}{% endif %}">
+<form method="post" action="{% if entity.id > 0 %}{{ path('_update',{'slug':entity.slug}) }}{% else %}{{ path('_create') }}{% endif %}">
     <div class="ui form segment">
         <div class="field">
             <label class="control-label required" for="event_startdate">Startdatum</label>
