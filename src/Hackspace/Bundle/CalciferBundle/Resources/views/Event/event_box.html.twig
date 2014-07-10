@@ -4,29 +4,29 @@
         </h2>
 
         <p class="edit">
-            <a href="{{ path('_edit', {'slug' : entity.slug }) }}"><i class="ui icon edit circular green inverted"></i>Bearbeiten</a>
+            <a href="{{ path('_edit', {'slug' : entity.slug }) }}"><i class="circular icon edit green inverted link"></i>Bearbeiten</a>
         </p>
 
         <p class="startdate ">
-            <i class="ui icon calendar circular green inverted link" title="Wann?" data-content="Wann?"></i>{{ entity.startdate.format('Y-m-d H:i') }}
+            <i class="circular icon calendar green inverted link" title="Wann?" data-content="Wann?"></i>{{ entity.startdate.format('Y-m-d H:i') }}
         </p>
 
         {% if entity.location is not null %}
             <p class="location">
-                <a href="{{ path('location_show', {'slug' : entity.location.slug }) }}"><i class="ui icon map marker circular green inverted link" title="Wo?" data-content="Wo?"></i>{{ entity.location.name }}</a>
+                <a href="{{ path('location_show', {'slug' : entity.location.slug }) }}"><i class="circular icon map marker green inverted link" title="Wo?" data-content="Wo?"></i>{{ entity.location.name }}</a>
             </p>
         {% endif %}
         {% if entity.tags|length > 0 %}
             <ul class="tags">
                 {% for tag in entity.tags %}
-                    <li class="tag"><a href="{{ path('tag_show',{'slug' : tag.slug }) }}"><i class="circular icon tag green inverted"></i>{{ tag.name }}</a></li>
+                    <li class="tag"><a href="{{ path('tag_show',{'slug' : tag.slug }) }}"><i class="circular icon tag green inverted link"></i>{{ tag.name }}</a></li>
                 {% endfor %}
             </ul>
         {% endif %}
 
         {% if entity.url|length > 0 %}
             <p class="url">
-                <a href="{{ entity.url }}"><i class="ui icon globe green circular inverted"></i>{{ entity.url }}</a>
+                <a href="{{ entity.url }}"><i class="circular icon globe green inverted link"></i>{{ entity.url }}</a>
             </p>
         {% endif %}
 
