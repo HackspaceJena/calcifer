@@ -35,7 +35,7 @@ class TagController extends Controller
     /**
      * Finds and displays a Event entity.
      *
-     * @Route("/{slug}", name="tag_show")
+     * @Route("/{slug}(?!\.ics)", name="tag_show")
      * @Method("GET")
      * @Template("CalciferBundle:Event:index.html.twig")
      */
@@ -76,12 +76,12 @@ class TagController extends Controller
     /**
      * Finds and displays a Event entity.
      *
-     * @Route("/{id}.ics", requirements={"id" = "\d+"}, name="tag_show_ics")
+     * @Route("/{slug}.ics", name="tag_show_ics")
      * @Method("GET")
      */
-    public function showActionICS($id)
+    public function showActionICS($slug)
     {
-        $results = $this->showAction(str_replace('.ics','',$id));
+        $results = $this->showAction(str_replace('.ics','',$slug));
         $entities = $results['entities'];
 
         $calendar = new Calendar();
