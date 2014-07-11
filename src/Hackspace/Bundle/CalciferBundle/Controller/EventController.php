@@ -84,16 +84,24 @@ class EventController extends Controller
             $results = $repo->findBy(['name' => $location]);
             if (count($results) > 0) {
                 $location_obj = $results[0];
-                $location_obj->setLat($location_lat);
-                $location_obj->setLon($location_lon);
+                if (strlen($location_lat) > 0) {
+                  $location_obj->setLat($location_lat);
+                }
+                if (strlen($location_lon) > 0) {
+                  $location_obj->setLon($location_lon);
+                }
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($results[0]);
             } else {
                 $location_obj = new Location();
                 $location_obj->setName($location);
-                $location_obj->setLat($location_lat);
-                $location_obj->setLon($location_lon);
+                if (strlen($location_lat) > 0) {
+                  $location_obj->setLat($location_lat);
+                }
+                if (strlen($location_lon) > 0) {
+                  $location_obj->setLon($location_lon);
+                }
                 $location_obj->setSlug(\URLify::filter($location_obj->getName(),255,'de'));
                 $em->persist($location_obj);
                 $em->flush();
@@ -253,16 +261,24 @@ class EventController extends Controller
             $results = $repo->findBy(['name' => $location]);
             if (count($results) > 0) {
                 $location_obj = $results[0];
-                $location_obj->setLat($location_lat);
-                $location_obj->setLon($location_lon);
+                if (strlen($location_lat) > 0) {
+                  $location_obj->setLat($location_lat);
+                }
+                if (strlen($location_lon) > 0) {
+                  $location_obj->setLon($location_lon);
+                }
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($results[0]);
             } else {
                 $location_obj = new Location();
                 $location_obj->setName($location);
-                $location_obj->setLat($location_lat);
-                $location_obj->setLon($location_lon);
+                if (strlen($location_lat) > 0) {
+                  $location_obj->setLat($location_lat);
+                }
+                if (strlen($location_lon) > 0) {
+                  $location_obj->setLon($location_lon);
+                }
                 $location_obj->setSlug(\URLify::filter($location_obj->getName(),255,'de'));
                 $em->persist($location_obj);
                 $em->flush();
