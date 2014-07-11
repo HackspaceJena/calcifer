@@ -79,7 +79,7 @@ class LocationController extends Controller
     /**
      * Finds and displays a Event entity.
      *
-     * @Route("/{slug}\.ics", name="location_show_ics")
+     * @Route("/{slug}.ics", name="location_show_ics")
      * @Method("GET")
      */
     public function showActionICS($slug)
