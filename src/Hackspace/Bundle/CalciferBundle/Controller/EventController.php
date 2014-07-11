@@ -34,13 +34,15 @@ class EventController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        $now = new \DateTime();
+        $now->setTime(0,0,0);
         /** @var QueryBuilder $qb */
         $qb = $em->createQueryBuilder();
         $qb ->select(array('e'))
             ->from('CalciferBundle:Event', 'e')
             ->where('e.startdate >= :startdate')
             ->orderBy('e.startdate')
-            ->setParameter('startdate',new \DateTime());
+            ->setParameter('startdate',$now);
         $entities = $qb->getQuery()->execute();
 
         return array(

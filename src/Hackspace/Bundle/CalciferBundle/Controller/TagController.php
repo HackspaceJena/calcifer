@@ -54,6 +54,9 @@ class TagController extends Controller
             throw $this->createNotFoundException('Unable to find tag entity.');
         }
 
+        $now = new \DateTime();
+        $now->setTime(0,0,0);
+
         /** @var QueryBuilder $qb */
         $qb = $em->createQueryBuilder();
         $qb ->select(array('e'))
@@ -61,7 +64,7 @@ class TagController extends Controller
             ->join('e.tags', 't', 'WITH', $qb->expr()->in('t.id', $tag->getId()))
             ->where('e.startdate >= :startdate')
             ->orderBy('e.startdate')
-            ->setParameter('startdate',new \DateTime());
+            ->setParameter('startdate',$now);
         $entities = $qb->getQuery()->execute();
 
         return array(

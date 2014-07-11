@@ -56,6 +56,9 @@ class LocationController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
+        $now = new \DateTime();
+        $now->setTime(0,0,0);
+
         /** @var QueryBuilder $qb */
         $qb = $em->createQueryBuilder();
         $qb ->select(array('e'))
@@ -63,7 +66,7 @@ class LocationController extends Controller
             ->where('e.startdate >= :startdate')
             ->andWhere('e.locations_id = :location')
             ->orderBy('e.startdate')
-            ->setParameter('startdate',new \DateTime())
+            ->setParameter('startdate',$now)
             ->setParameter('location',$location->getId());
         $entities = $qb->getQuery()->execute();
 
