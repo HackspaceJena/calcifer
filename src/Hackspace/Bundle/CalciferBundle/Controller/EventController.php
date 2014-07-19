@@ -59,76 +59,8 @@ class EventController extends Controller
     public function createAction(Request $request)
     {
         $entity = new Event();
-        $entity->setDescription($request->get('description'));
-        $entity->setSummary($request->get('summary'));
-        $entity->setUrl($request->get('url'));
-        $startdate = $request->get('startdate');
-        $startdate = new \DateTime($startdate);
-        $entity->setStartdate($startdate);
-        $entity->setSlug(\URLify::filter($entity->getSummary(),255,'de'));
 
-        $enddate = $request->get('enddate');
-        if (strlen($enddate) > 0) {
-            $enddate = new \DateTime($enddate);
-            $entity->setenddate($enddate);
-        }
-
-        $location = $request->get('location');
-        $location_lat = $request->get('location_lat');
-        $location_lon = $request->get('location_lon');
-        if (strlen($location) > 0) {
-            // check if the location already exists
-            /** @var EntityManager $em */
-            $em = $this->getDoctrine()->getManager();
-            $repo = $em->getRepository('CalciferBundle:Location');
-            $results = $repo->findBy(['name' => $location]);
-            if (count($results) > 0) {
-                $location_obj = $results[0];
-                if (strlen($location_lat) > 0) {
-                  $location_obj->setLat($location_lat);
-                }
-                if (strlen($location_lon) > 0) {
-                  $location_obj->setLon($location_lon);
-                }
-                $em->persist($location_obj);
-                $em->flush();
-                $entity->setLocation($results[0]);
-            } else {
-                $location_obj = new Location();
-                $location_obj->setName($location);
-                if (strlen($location_lat) > 0) {
-                  $location_obj->setLat($location_lat);
-                }
-                if (strlen($location_lon) > 0) {
-                  $location_obj->setLon($location_lon);
-                }
-                $location_obj->setSlug(\URLify::filter($location_obj->getName(),255,'de'));
-                $em->persist($location_obj);
-                $em->flush();
-                $entity->setLocation($location_obj);
-            }
-        }
-
-        $tags = $request->get('tags');
-        if (strlen($tags) > 0) {
-            $tags = explode(',',$tags);
-            $em = $this->getDoctrine()->getManager();
-            $repo = $em->getRepository('CalciferBundle:Tag');
-            foreach ($tags as $tag) {
-                $tag = trim($tag);
-                $results = $repo->findBy(['name' => $tag]);
-                if (count($results) > 0) {
-                    $entity->addTag($results[0]);
-                } else {
-                    $tag_obj = new Tag();
-                    $tag_obj->setName($tag);
-                    $tag_obj->setSlug(\URLify::filter($tag_obj->getName(),255,'de'));
-                    $em->persist($tag_obj);
-                    $em->flush();
-                    $entity->addTag($tag_obj);
-                }
-            }
-        }
+        $em = $this->saveEvent($request, $entity);
 
 
         if ($entity->isValid()) {
@@ -136,7 +68,7 @@ class EventController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('_show', array('slug' => $entity->getSlug())));
+            return $this->redirect($this->generateUrl('_show', array('slug' => $entity->slug)));
         }
 
         return array(
@@ -236,18 +168,42 @@ class EventController extends Controller
             throw $this->createNotFoundException('Unable to find Event entity.');
         }
 
-        $entity->setDescription($request->get('description'));
-        $entity->setSummary($request->get('summary'));
-        $entity->setUrl($request->get('url'));
+        $em = $this->saveEvent($request, $entity);
+
+
+        if ($entity->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($entity);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('_show', array('slug' => $entity->slug)));
+        }
+
+        return array(
+            'entity'      => $entity,
+
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param $entity
+     * @return EntityManager
+     */
+    public function saveEvent(Request $request, Event $entity)
+    {
+        $entity->description = $request->get('description');
+        $entity->summary = $request->get('summary');
+        $entity->url = $request->get('url');
         $startdate = $request->get('startdate');
         $startdate = new \DateTime($startdate);
-        $entity->setStartdate($startdate);
-        $entity->setSlug(\URLify::filter($entity->getSummary(),255,'de'));
+        $entity->startdate = $startdate;
+        $entity->slug = \URLify::filter($entity->summary, 255, 'de');
 
         $enddate = $request->get('enddate');
         if (strlen($enddate) > 0) {
             $enddate = new \DateTime($enddate);
-            $entity->setenddate($enddate);
+            $entity->enddate = $enddate;
         }
 
         $location = $request->get('location');
@@ -262,24 +218,24 @@ class EventController extends Controller
             if (count($results) > 0) {
                 $location_obj = $results[0];
                 if (strlen($location_lat) > 0) {
-                  $location_obj->setLat($location_lat);
+                    $location_obj->lat = $location_lat;
                 }
                 if (strlen($location_lon) > 0) {
-                  $location_obj->setLon($location_lon);
+                    $location_obj->lon = $location_lon;
                 }
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($results[0]);
             } else {
                 $location_obj = new Location();
-                $location_obj->setName($location);
+                $location_obj->name = $location;
                 if (strlen($location_lat) > 0) {
-                  $location_obj->setLat($location_lat);
+                    $location_obj->lat = $location_lat;
                 }
                 if (strlen($location_lon) > 0) {
-                  $location_obj->setLon($location_lon);
+                    $location_obj->lon = $location_lon;
                 }
-                $location_obj->setSlug(\URLify::filter($location_obj->getName(),255,'de'));
+                $location_obj->slug = \URLify::filter($location_obj->name, 255, 'de');
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($location_obj);
@@ -288,7 +244,7 @@ class EventController extends Controller
 
         $tags = $request->get('tags');
         if (strlen($tags) > 0) {
-            $tags = explode(',',$tags);
+            $tags = explode(',', $tags);
             $em = $this->getDoctrine()->getManager();
             $repo = $em->getRepository('CalciferBundle:Tag');
             foreach ($tags as $tag) {
@@ -298,27 +254,15 @@ class EventController extends Controller
                     $entity->addTag($results[0]);
                 } else {
                     $tag_obj = new Tag();
-                    $tag_obj->setName($tag);
-                    $tag_obj->setSlug(\URLify::filter($tag_obj->getName(),255,'de'));
+                    $tag_obj->name = $tag;
+                    $tag_obj->slug = \URLify::filter($tag_obj->getName(), 255, 'de');
                     $em->persist($tag_obj);
                     $em->flush();
                     $entity->addTag($tag_obj);
                 }
             }
+            return $em;
         }
-
-
-        if ($entity->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('_show', array('slug' => $entity->getSlug())));
-        }
-
-        return array(
-            'entity'      => $entity,
-
-        );
+        return $em;
     }
 }
