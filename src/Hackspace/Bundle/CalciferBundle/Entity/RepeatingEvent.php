@@ -11,7 +11,7 @@ use Doctrine\ORM\PersistentCollection;
  * @ORM\Table(name="repeat_events")
  * @ORM\Entity
  */
-class RepeatEvent extends BaseEntity
+class RepeatingEvent extends BaseEntity
 {
     /**
      * @var \DateTime
