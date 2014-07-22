@@ -15,6 +15,7 @@ Diese Anleitung geht davon aus das du SSH-Zugriff auf deinen Server hast. Wenn d
 3. Abhängigkeiten installieren
  1. composer herunterladen ```curl -sS https://getcomposer.org/installer | php```
  2. Installation ausführen: ```php composer.phar install```
-4. Im Verzeichnis app/config die Datei parameters.yml.dist nach parameters.yml kopieren und anpassen.
 5. Dann die Tabellen erstellen: php app/console doctrine:schema:create
+6. Cache löschen ```php app/console cache:clear --env=prod --no-debug```
+7. Assets dumpen ```php app/console assetic:dump --env=prod --no-debug```
 6. Zum Schluss must du noch deinen Webserver [konfigurieren](http://symfony.com/doc/current/cookbook/configuration/web_server_configuration.html) und dann ist calcifer auch schon erreichbar.
