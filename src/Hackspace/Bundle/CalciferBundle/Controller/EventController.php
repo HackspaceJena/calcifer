@@ -255,7 +255,7 @@ class EventController extends Controller
                 } else {
                     $tag_obj = new Tag();
                     $tag_obj->name = $tag;
-                    $tag_obj->slug = \URLify::filter($tag_obj->getName(), 255, 'de');
+                    $tag_obj->slug = \URLify::filter($tag_obj->name, 255, 'de');
                     $em->persist($tag_obj);
                     $em->flush();
                     $entity->addTag($tag_obj);
