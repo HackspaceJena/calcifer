@@ -61,7 +61,7 @@ class TagController extends Controller
         $qb = $em->createQueryBuilder();
         $qb->select(array('e'))
             ->from('CalciferBundle:Event', 'e')
-            ->join('e.tags', 't', 'WITH', $qb->expr()->in('t.id', $tag->getId()))
+            ->join('e.tags', 't', 'WITH', $qb->expr()->in('t.id', $tag->id))
             ->where('e.startdate >= :startdate')
             ->orderBy('e.startdate')
             ->setParameter('startdate', $now);
@@ -79,7 +79,7 @@ class TagController extends Controller
                 $event->setSummary($entity->summary);
                 $event->setDescription($entity->description);
                 $location = new \Jsvrcek\ICS\Model\Description\Location();
-                $location->setName($entity->getLocation()->name);
+                $location->setName($entity->location->name);
                 $event->setLocations([$location]);
                 $calendar->addEvent($event);
             }
