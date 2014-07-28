@@ -8,7 +8,7 @@ use Doctrine\ORM\PersistentCollection;
 /**
  * RepeatEvent
  *
- * @ORM\Table(name="repeat_events")
+ * @ORM\Table(name="repeating_events")
  * @ORM\Entity
  */
 class RepeatingEvent extends BaseEntity
@@ -18,7 +18,7 @@ class RepeatingEvent extends BaseEntity
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="startdate", type="datetimetz")
+     * @ORM\Column(name="nextdate", type="datetimetz")
      */
     protected $nextdate;
 
@@ -32,9 +32,9 @@ class RepeatingEvent extends BaseEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="repeating_pattern", type="string", length=255)
      */
-    protected $repeat_pattern = '';
+    protected $repeating_pattern = '';
 
     /**
      * @var string
@@ -76,4 +76,16 @@ class RepeatingEvent extends BaseEntity
      */
     protected $tags = [];
 
+    public function getFormatedRepeatPattern() {
+        switch($this->repeating_pattern) {
+            case 'PD7':
+                return 'Wöchentlich';
+            case 'PD14':
+                return 'Alle 2 Wochen';
+            case 'PM1':
+                return 'Monatlich';
+            default:
+                return $this->repeating_pattern;
+        }
+    }
 }
