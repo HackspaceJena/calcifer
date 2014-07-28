@@ -78,11 +78,11 @@ class RepeatingEvent extends BaseEntity
 
     public function getFormatedRepeatPattern() {
         switch($this->repeating_pattern) {
-            case 'PD7':
+            case 'P7D':
                 return 'Wöchentlich';
-            case 'PD14':
+            case 'P14D':
                 return 'Alle 2 Wochen';
-            case 'PM1':
+            case 'P1M':
                 return 'Monatlich';
             default:
                 return $this->repeating_pattern;
