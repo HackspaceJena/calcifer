@@ -18,4 +18,5 @@ Diese Anleitung geht davon aus das du SSH-Zugriff auf deinen Server hast. Wenn d
 5. Dann die Tabellen erstellen: php app/console doctrine:schema:create
 6. Cache löschen ```php app/console cache:clear --env=prod --no-debug```
 7. Assets dumpen ```php app/console assetic:dump --env=prod --no-debug```
+8. Einen täglichen Cronjob anlegen, der die wiederholenden Termine anlegt: ```php app/console calcifer:events:generate```
 6. Zum Schluss must du noch deinen Webserver [konfigurieren](http://symfony.com/doc/current/cookbook/configuration/web_server_configuration.html) und dann ist calcifer auch schon erreichbar.
