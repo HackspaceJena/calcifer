@@ -247,6 +247,7 @@ class EventController extends Controller
             $tags = explode(',', $tags);
             $em = $this->getDoctrine()->getManager();
             $repo = $em->getRepository('CalciferBundle:Tag');
+            $entity->clearTags();
             foreach ($tags as $tag) {
                 $tag = trim($tag);
                 $results = $repo->findBy(['name' => $tag]);
