@@ -3,7 +3,6 @@
 namespace Hackspace\Bundle\CalciferBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\PersistentCollection;
 
 /**
  * Event
@@ -13,6 +12,8 @@ use Doctrine\ORM\PersistentCollection;
  */
 class Event extends BaseEntity
 {
+    use TagTrait;
+
     /**
      * @var \DateTime
      *
@@ -92,41 +93,7 @@ class Event extends BaseEntity
         return $this->location;
     }
 
-    public function getTags() {
-        return $this->tags;
-    }
-
-    public function hasTag(Tag $tag) {
-        if ($this->tags instanceof PersistentCollection) {
-            return $this->tags->contains($tag);
-        } elseif (is_array($this->tags)) {
-            return in_array($tag,$this->tags);
-        } else {
-            return false;
-        }
-
-    }
-
-    public function addTag(Tag $tag) {
-        /** @var PersistentCollection $this->tags */
-        if (!$this->hasTag($tag)) {
-            $this->tags[] = $tag;
-        }
-    }
-
     public function isValid() {
         return true;
-    }
-
-    public function getTagsAsText() {
-        if (count($this->tags) > 0) {
-            $tags = [];
-            foreach ($this->tags as $tag) {
-                $tags[] = $tag->name;
-            }
-            return implode(',',$tags);
-        } else {
-            return '';
-        }
     }
 }

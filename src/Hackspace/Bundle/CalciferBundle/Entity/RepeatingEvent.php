@@ -13,6 +13,8 @@ use Doctrine\ORM\PersistentCollection;
  */
 class RepeatingEvent extends BaseEntity
 {
+    use TagTrait;
+
     /**
      * @var \DateTime
      *
@@ -67,8 +69,8 @@ class RepeatingEvent extends BaseEntity
      * @var array
      *
      * @ORM\ManyToMany(targetEntity="Tag")
-     * @ORM\JoinTable(name="repeat_events2tags",
-     *      joinColumns={@ORM\JoinColumn(name="repeat_events_id", referencedColumnName="id")},
+     * @ORM\JoinTable(name="repeating_events2tags",
+     *      joinColumns={@ORM\JoinColumn(name="repeating_events_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="tags_id", referencedColumnName="id")}
      *      )
      */
