@@ -5,7 +5,7 @@ parameters:
     database_name:     symfony
     database_user:     root
     database_password: ~
-    database_path:     "%kernel.root_dir%/ffcal.sqlite3"
+    database_path:     "%kernel.root_dir%/calcifer.sqlite3"
 
     mailer_transport:  smtp
     mailer_host:       127.0.0.1

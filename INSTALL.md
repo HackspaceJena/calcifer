@@ -15,8 +15,9 @@ Diese Anleitung geht davon aus das du SSH-Zugriff auf deinen Server hast. Wenn d
 3. Abhängigkeiten installieren
  1. composer herunterladen ```curl -sS https://getcomposer.org/installer | php```
  2. Installation ausführen: ```php composer.phar install```
+  - für PostgreSQL wähl pdo_pgsql als Datenbanktreiber
   - für MySQL wähle pdo_mysql als Datenbanktreiber
-  - für SQLite ist pdo_sqlite zu nutzen, dabei ist der Pfad anzugeben. Der Standardpfad legt die Datei ffcal.sqlite3 im Verzeichnis app an.
+  - für SQLite ist pdo_sqlite zu nutzen, dabei ist der Pfad anzugeben. Der Standardpfad legt die Datei calcifer.sqlite3 im Verzeichnis app an.
 5. Dann die Tabellen erstellen: ```php app/console doctrine:schema:update --force```
 6. Cache löschen ```php app/console cache:clear --env=prod --no-debug```
 7. Assets dumpen ```php app/console assetic:dump --env=prod --no-debug```
