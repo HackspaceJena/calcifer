@@ -15,7 +15,7 @@ Diese Anleitung geht davon aus das du SSH-Zugriff auf deinen Server hast. Wenn d
 3. Abhängigkeiten installieren
  1. composer herunterladen ```curl -sS https://getcomposer.org/installer | php```
  2. Installation ausführen: ```php composer.phar install```
-5. Dann die Tabellen erstellen: php app/console doctrine:schema:create
+5. Dann die Tabellen erstellen: ```php app/console doctrine:schema:update --force```
 6. Cache löschen ```php app/console cache:clear --env=prod --no-debug```
 7. Assets dumpen ```php app/console assetic:dump --env=prod --no-debug```
 8. Einen täglichen Cronjob anlegen, der die wiederholenden Termine anlegt: ```php app/console calcifer:events:generate```
