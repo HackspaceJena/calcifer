@@ -75,7 +75,8 @@ class TagController extends Controller
                 /** @var Event $entity */
                 $event = new CalendarEvent();
                 $event->setStart($entity->startdate);
-                $event->setEnd($entity->enddate);
+                if ($entity->enddate instanceof \DateTime)
+                    $event->setEnd($entity->enddate);
                 $event->setSummary($entity->summary);
                 $event->setDescription($entity->description);
                 $location = new \Jsvrcek\ICS\Model\Description\Location();
