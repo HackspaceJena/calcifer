@@ -9,6 +9,7 @@
 namespace Hackspace\Bundle\CalciferBundle\Command;
 
 
+use Doctrine\ORM\EntityManager;
 use Hackspace\Bundle\CalciferBundle\Entity\Event;
 use Hackspace\Bundle\CalciferBundle\Entity\RepeatingEvent;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -37,12 +38,14 @@ class GenerateEventsCommand extends ContainerAwareCommand
             $end->add($duration);
             $output->writeln(sprintf("Generating Dates from %s to %s",$now->format('Y-m-d'),$end->format('Y-m-d')));
             $output->writeln("Fetching repeating events");
+            /** @var EntityManager $entityManager */
             $entityManager = $this->getContainer()->get('doctrine')->getManager();
             $repo = $entityManager->getRepository('CalciferBundle:RepeatingEvent');
             $entities = $repo->findAll();
             foreach($entities as $entity) {
                 /** @var RepeatingEvent $entity */
                 $period = new \DatePeriod($entity->nextdate,new \DateInterval($entity->repeating_pattern),$end);
+                $event = null;
                 foreach($period as $date) {
                     /** @var \DateTime $date */
                     $output->writeln(sprintf("Creating Event %s for %s",$entity->summary,$date->format('Y-m-d H:i')));
@@ -50,7 +53,7 @@ class GenerateEventsCommand extends ContainerAwareCommand
                     $event->location = $entity->location;
                     $event->startdate = $date;
                     if ($entity->duration > 0) {
-                        $duration = new \DateInterval("PT".$duration.'H');
+                        $duration = new \DateInterval("PT".$entity->duration.'H');
                         /** @var \DateTime $enddate */
                         $enddate = clone $date;
                         $enddate->add($duration);
@@ -68,6 +71,12 @@ class GenerateEventsCommand extends ContainerAwareCommand
                         $event->addTag($tag);
                     }
                     $entityManager->persist($event);
+                    $entityManager->flush();
+                }
+                if (!is_null($event)) {
+                    $entity->nextdate = $event->startdate;
+                    $entity->nextdate->add(new \DateInterval($entity->repeating_pattern));
+                    $entityManager->persist($entity);
                     $entityManager->flush();
                 }
             }
