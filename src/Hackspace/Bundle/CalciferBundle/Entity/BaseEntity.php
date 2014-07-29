@@ -12,6 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
 
 /**
+ * A baseclass for all other entities
+ *
+ * @property integer $id
+ * @property string $slug
+ *
  * @ORM\MappedSuperclass
  */
 abstract class BaseEntity {

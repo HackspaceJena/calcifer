@@ -7,6 +7,14 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Event
  *
+ * @property \DateTime $startdate
+ * @property \DateTime $enddate
+ * @property string $summary
+ * @property string $description
+ * @property Location $location
+ * @property string $url
+ * @property array $tags
+ *
  * @ORM\Table(name="events")
  * @ORM\Entity
  */

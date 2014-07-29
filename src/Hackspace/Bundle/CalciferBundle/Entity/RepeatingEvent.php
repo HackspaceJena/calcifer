@@ -8,6 +8,15 @@ use Doctrine\ORM\PersistentCollection;
 /**
  * RepeatEvent
  *
+ * @property \DateTime $nextdate
+ * @property integer $duration
+ * @property string $repeating_pattern
+ * @property string $summary
+ * @property string $description
+ * @property Location $location
+ * @property string $url
+ * @property array $tags
+ *
  * @ORM\Table(name="repeating_events")
  * @ORM\Entity
  */
