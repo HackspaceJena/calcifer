@@ -5,9 +5,14 @@
     <title>{% block title %}Terminverwaltung Calcifer{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link href="{{ asset('css/semantic.css') }}" rel="stylesheet" media="screen">
     <link href='//fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
-    <link href="{{ asset('css/custom.css') }}" rel="stylesheet" media="screen">
+    {% stylesheets filter="compass"
+        "@CalciferBundle/Resources/assets/css/main.scss"
+        "css/semantic.scss"
+        "css/custom.scss"
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" media="screen" />
+    {% endstylesheets %}
     {% block css %}
 
     {% endblock %}
@@ -16,6 +21,21 @@
 
 <body>
 {% include "CalciferBundle::navigation.html.twig" %}
+
+<div class="ui one column page grid">
+    <div class="column">
+        <div id="mission-statement" class="ui message green">
+            {% image '@CalciferBundle/Resources/assets/images/logo.png' %}
+            <img
+                    title="Eine Zeichnung von Calcifer. Gezeichnet von simply-Sylvan (http://simply-sylvan.deviantart.com/art/Calcifer-Purple-176746086)"
+                    alt="Eine Zeichnung von Calcifer. Gezeichnet von simply-Sylvan (http://simply-sylvan.deviantart.com/art/Calcifer-Purple-176746086)"
+                    src="{{ asset_url }}"
+                    class="ui image small floated left" />
+            {% endimage %}
+            <p>Calcifer ist ein Daemon aus dem Anime <a href="http://anidb.net/perl-bin/animedb.pl?show=anime&amp;aid=1218">„Das wandelnde Schloss“</a>, der sich darum kümmert das sich Howls Schloss weiter bewegt. Diese Terminverwaltung soll dafür sorgen das sich der <a href="https://www.krautspace.de/">Hackspace Jena</a> auch weiter bewegt und viele tolle Termine statfinden.</p>
+        </div>
+    </div>
+</div>
 
 <div id="main" class="segment">
     {% block body %}{% endblock %}
