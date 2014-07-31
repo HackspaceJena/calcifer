@@ -24,7 +24,7 @@ use Jsvrcek\ICS\Model\Relationship\Organizer;
 use Jsvrcek\ICS\Utility\Formatter;
 use Jsvrcek\ICS\CalendarStream;
 use Jsvrcek\ICS\CalendarExport;
-use Symfony\Component\Validator\Constraints\DateTime;
+use Jsvrcek\ICS\Model\Description\Geo;
 
 /**
  * Location controller.
@@ -82,6 +82,18 @@ class LocationController extends Controller
                 if ($entity->enddate instanceof \DateTime)
                     $event->setEnd($entity->enddate);
                 $event->setSummary($entity->summary);
+                $event->setUrl($entity->url);
+                if ($entity->location instanceof Location) {
+                    $location = new \Jsvrcek\ICS\Model\Description\Location();
+                    $location->setName($entity->location->name);
+                    $event->setLocations([$location]);
+                    if (\is_float($entity->location->lon) && \is_float($entity->location->lat)) {
+                        $geo = new Geo();
+                        $geo->setLatitude($entity->location->lat);
+                        $geo->setLongitude($entity->location->lon);
+                        $event->setGeo($geo);
+                    }
+                }
                 $event->setDescription($entity->description);
                 $location = new \Jsvrcek\ICS\Model\Description\Location();
                 $location->setName($entity->getLocation()->name);

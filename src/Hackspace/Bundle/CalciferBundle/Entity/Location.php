@@ -7,6 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Location
  *
+ * @property string $name
+ * @property float $lon
+ * @property float $lat
+ *
  * @ORM\Table(name="locations")
  * @ORM\Entity
  */
