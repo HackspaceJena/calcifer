@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Hackspace\Bundle\CalciferBundle\Entity\Location;
 use Hackspace\Bundle\CalciferBundle\Entity\Tag;
+use Jsvrcek\ICS\Model\Description\Geo;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -79,9 +80,18 @@ class TagController extends Controller
                     $event->setEnd($entity->enddate);
                 $event->setSummary($entity->summary);
                 $event->setDescription($entity->description);
-                $location = new \Jsvrcek\ICS\Model\Description\Location();
-                $location->setName($entity->location->name);
-                $event->setLocations([$location]);
+                $event->setUrl($entity->url);
+                if ($entity->location instanceof Location) {
+                    $location = new \Jsvrcek\ICS\Model\Description\Location();
+                    $location->setName($entity->location->name);
+                    $event->setLocations([$location]);
+                    if (\is_float($entity->location->lon) && \is_float($entity->location->lat)) {
+                        $geo = new Geo();
+                        $geo->setLatitude($entity->location->lat);
+                        $geo->setLongitude($entity->location->lon);
+                        $event->setGeo($geo);
+                    }
+                }
                 $calendar->addEvent($event);
             }
 
