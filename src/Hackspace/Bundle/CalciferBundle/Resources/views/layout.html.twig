@@ -27,11 +27,13 @@
     <div class="column">
         <div id="mission-statement" class="ui message green">
             {% image '@CalciferBundle/Resources/assets/images/logo.png' %}
-            <img
+            <a href="{{ path('') }}">
+                <img
                     title="Eine Zeichnung von Calcifer. Gezeichnet von simply-Sylvan (http://simply-sylvan.deviantart.com/art/Calcifer-Purple-176746086)"
                     alt="Eine Zeichnung von Calcifer. Gezeichnet von simply-Sylvan (http://simply-sylvan.deviantart.com/art/Calcifer-Purple-176746086)"
                     src="{{ asset_url }}"
                     class="ui image small floated left" />
+            </a>
             {% endimage %}
             <p>Calcifer ist ein Daemon aus dem Anime <a href="http://anidb.net/perl-bin/animedb.pl?show=anime&amp;aid=1218">„Das wandelnde Schloss“</a>, der sich darum kümmert das sich Howls Schloss weiter bewegt. Diese Terminverwaltung soll dafür sorgen das sich der <a href="https://www.krautspace.de/">Hackspace Jena</a> auch weiter bewegt und viele tolle Termine statfinden.</p>
         </div>
