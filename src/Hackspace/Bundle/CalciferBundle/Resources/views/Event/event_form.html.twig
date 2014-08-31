@@ -9,7 +9,7 @@
                        name="startdate"
                        required="required"
                        value="{{ entity.startdate.format('Y-m-d H:i')|default('') }}"
-                       placeholder="{{ "now"|date('d.m.Y H:i') }}"
+                       placeholder="{{ "now"|date('Y-m-d H:i') }}"
                        class="form-control">
 
                 <i class="icon calendar"></i>
@@ -27,7 +27,7 @@
                        id="event_enddate"
                        name="enddate"
                        value="{{ entity.enddate.format('Y-m-d H:i')|default('') }}"
-                       placeholder="{{ "now"|date('d.m.Y H:i') }}"
+                       placeholder="{{ "now"|date('Y-m-d H:i') }}"
                        class="form-control">
 
                 <i class="icon calendar"></i>
