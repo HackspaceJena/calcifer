@@ -11,7 +11,7 @@
 
         <p class="startdate ">
             <i class="circular icon calendar green inverted link" title="Wann?"
-               data-content="Wann?"></i>{{ entity.startdate.format('Y-m-d H:i') }}
+               data-content="Wann?"></i>{{ entity.getFormatedDate() }}
         </p>
 
         {% if entity.location is not null %}
