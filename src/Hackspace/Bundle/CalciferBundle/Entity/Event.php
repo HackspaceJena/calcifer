@@ -104,4 +104,17 @@ class Event extends BaseEntity
     public function isValid() {
         return true;
     }
+
+    public function getFormatedDate() {
+        $retval = $this->startdate->format('Y-m-d H:i');
+        if (!is_null($this->enddate)) {
+            $retval .= " — ";
+            if ($this->startdate->format('Y-m-d') == $this->enddate->format('Y-m-d')) {
+                $retval .= $this->enddate->format('H:i');
+            } else {
+                $retval .= $this->enddate->format('Y-m-d H:i');
+            }
+        }
+        return $retval;
+    }
 }

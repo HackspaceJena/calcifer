@@ -204,6 +204,8 @@ class EventController extends Controller
         if (strlen($enddate) > 0) {
             $enddate = new \DateTime($enddate);
             $entity->enddate = $enddate;
+        } else {
+            $entity->enddate = null;
         }
 
         $location = $request->get('location');
