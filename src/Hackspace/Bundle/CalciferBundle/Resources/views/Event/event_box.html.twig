@@ -11,17 +11,11 @@
         </p>
 
         <p class="action">
-            <a href="{{ path('_delete', {'slug' : entity.slug }) }}">
-                <i class="circular icon delete green inverted link"></i>
-                Löschen
-            </a>
+            <a href="{{ path('_delete', {'slug' : entity.slug }) }}"><i class="circular icon delete green inverted link"></i>Löschen</a>
         </p>
 
         <p class="action">
-            <a href="{{ path('_copy', {'slug' : entity.slug }) }}">
-                <i class="circular icon copy green inverted link"></i>
-                Kopieren
-            </a>
+            <a href="{{ path('_copy', {'slug' : entity.slug }) }}"><i class="circular icon copy green inverted link"></i>Kopieren</a>
         </p>
         {% endif %}
 
