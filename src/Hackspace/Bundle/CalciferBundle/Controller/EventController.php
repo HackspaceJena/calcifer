@@ -268,4 +268,41 @@ class EventController extends Controller
         }
         return $em;
     }
+
+    /**
+     * Deletes a Event entity.
+     *
+     * @Route("/termine/{slug}/löschen", name="_delete")
+     * @Method({"GET", "POST"})
+     * @Template("CalciferBundle:Event:delete.html.twig")
+     */
+    public function deleteAction(Request $request, $slug) {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:Event');
+
+        /** @var Event $entity */
+        $entity = $repo->findOneBy(['slug' => $slug]);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Event entity.');
+        }
+
+
+        $confirmation = $request->get('confirmation',false);
+
+        if (($request->getMethod() == 'POST') && ($confirmation)) {
+            $em->remove($entity);
+            $em->flush();
+
+            return $this->redirect('/');
+        }
+
+        return array(
+            'entity'      => $entity,
+
+        );
+    }
 }

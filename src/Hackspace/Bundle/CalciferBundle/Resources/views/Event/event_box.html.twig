@@ -9,6 +9,13 @@
             <a href="{{ path('_edit', {'slug' : entity.slug }) }}"><i
                         class="circular icon edit green inverted link"></i>Bearbeiten</a>
         </p>
+
+        <p class="delete">
+            <a href="{{ path('_delete', {'slug' : entity.slug }) }}">
+                <i class="circular icon delete green inverted link"></i>
+                Löschen
+            </a>
+        </p>
         {% endif %}
 
         <p class="startdate ">
