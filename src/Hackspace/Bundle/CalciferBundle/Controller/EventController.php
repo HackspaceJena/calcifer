@@ -305,4 +305,33 @@ class EventController extends Controller
 
         );
     }
+
+    /**
+     * Copies a Event entity.
+     *
+     * @Route("/termine/{slug}/kopieren", name="_copy")
+     * @Method("GET")
+     * @Template("CalciferBundle:Event:new.html.twig")
+     */
+    public function copyAction(Request $request, $slug) {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:Event');
+
+        /** @var Event $entity */
+        $entity = $repo->findOneBy(['slug' => $slug]);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Event entity.');
+        }
+
+        $entity->id = null;
+
+        return array(
+            'entity'      => $entity,
+
+        );
+    }
 }
