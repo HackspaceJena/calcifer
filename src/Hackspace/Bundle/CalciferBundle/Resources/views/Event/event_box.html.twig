@@ -4,10 +4,12 @@
                     href="{{ path('_show', { 'slug': entity.slug }) }}">{{ entity.summary }}</a>
         </h2>
 
+        {% if (detail|default(false)) %}
         <p class="edit">
             <a href="{{ path('_edit', {'slug' : entity.slug }) }}"><i
                         class="circular icon edit green inverted link"></i>Bearbeiten</a>
         </p>
+        {% endif %}
 
         <p class="startdate ">
             <i class="circular icon calendar green inverted link" title="Wann?"
