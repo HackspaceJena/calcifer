@@ -295,4 +295,15 @@ class RepeatingEventController extends Controller
 
         );
     }
+
+    /**
+     * Deletes a Event entity.
+     *
+     * @Route("/wiederholungsmuster", name="repeating_patterns")
+     * @Method({"GET", "POST"})
+     * @Template("CalciferBundle:RepeatingEvent:repeating_patterns.html.twig")
+     */
+    public function repeatingPatternsHelpAction(Request $request) {
+        return null;
+    }
 }

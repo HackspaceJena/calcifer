@@ -44,7 +44,7 @@
                             {{ entity.nextdate.format('Y-m-d H:i') }}
                         </td>
                         <td>
-                            {{ entity.getFormatedRepeatPattern() }}
+                            {{ entity.repeating_pattern }}
                         </td>
                         <td>
                             <a href="{{ path('repeating_event_edit', {'slug':entity.slug}) }}">Bearbeiten</a> |
