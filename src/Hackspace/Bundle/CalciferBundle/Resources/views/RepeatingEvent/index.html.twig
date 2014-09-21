@@ -47,7 +47,8 @@
                             {{ entity.getFormatedRepeatPattern() }}
                         </td>
                         <td>
-                            <a href="{{ path('repeating_event_edit', {'slug':entity.slug}) }}">Bearbeiten</a>
+                            <a href="{{ path('repeating_event_edit', {'slug':entity.slug}) }}">Bearbeiten</a> |
+                            <a href="{{ path('repeating_event_delete', {'slug':entity.slug}) }}">Löschen</a>
                         </td>
                     </tr>
                 {% endfor %}

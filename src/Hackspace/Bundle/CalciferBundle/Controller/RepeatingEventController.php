@@ -257,6 +257,42 @@ class RepeatingEventController extends Controller
         $em->flush();
 
         return $entity;
+    }
 
+    /**
+     * Deletes a Event entity.
+     *
+     * @Route("/{slug}/löschen", name="repeating_event_delete")
+     * @Method({"GET", "POST"})
+     * @Template("CalciferBundle:RepeatingEvent:delete.html.twig")
+     */
+    public function deleteAction(Request $request, $slug) {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:RepeatingEvent');
+
+        /** @var Event $entity */
+        $entity = $repo->findOneBy(['slug' => $slug]);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Event entity.');
+        }
+
+
+        $confirmation = $request->get('confirmation',false);
+
+        if (($request->getMethod() == 'POST') && ($confirmation)) {
+            $em->remove($entity);
+            $em->flush();
+
+            return $this->redirect('/');
+        }
+
+        return array(
+            'entity'      => $entity,
+
+        );
     }
 }
