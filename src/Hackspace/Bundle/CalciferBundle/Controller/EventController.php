@@ -192,13 +192,16 @@ class EventController extends Controller
      */
     public function saveEvent(Request $request, Event $entity)
     {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
         $entity->description = $request->get('description');
         $entity->summary = $request->get('summary');
         $entity->url = $request->get('url');
         $startdate = $request->get('startdate');
         $startdate = new \DateTime($startdate);
         $entity->startdate = $startdate;
-        $entity->slug = \URLify::filter($entity->summary, 255, 'de');
+        $entity->slug = $entity->generateSlug($entity->summary,$em);
 
         $enddate = $request->get('enddate');
         if (strlen($enddate) > 0) {
@@ -237,7 +240,7 @@ class EventController extends Controller
                 if (strlen($location_lon) > 0) {
                     $location_obj->lon = $location_lon;
                 }
-                $location_obj->slug = \URLify::filter($location_obj->name, 255, 'de');
+                $location_obj->slug = $location_obj->generateSlug($location->name,$em);
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($location_obj);
@@ -258,7 +261,7 @@ class EventController extends Controller
                 } else {
                     $tag_obj = new Tag();
                     $tag_obj->name = $tag;
-                    $tag_obj->slug = \URLify::filter($tag_obj->name, 255, 'de');
+                    $tag_obj->slug = $tag_obj->generateSlug($tag_obj->name,$em);
                     $em->persist($tag_obj);
                     $em->flush();
                     $entity->addTag($tag_obj);
