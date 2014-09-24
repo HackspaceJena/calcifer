@@ -40,7 +40,7 @@ class LocationController extends Controller
      * @Method("GET")
      * @Template("CalciferBundle:Event:index.html.twig")
      */
-    public function showAction($slug,$format)
+    public function showAction($slug, $format)
     {
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
@@ -58,17 +58,17 @@ class LocationController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $now = new \DateTime();
-        $now->setTime(0,0,0);
+        $now->setTime(0, 0, 0);
 
         /** @var QueryBuilder $qb */
         $qb = $em->createQueryBuilder();
-        $qb ->select(array('e'))
+        $qb->select(array('e'))
             ->from('CalciferBundle:Event', 'e')
             ->where('e.startdate >= :startdate')
             ->andWhere('e.locations_id = :location')
             ->orderBy('e.startdate')
-            ->setParameter('startdate',$now)
-            ->setParameter('location',$location->id);
+            ->setParameter('startdate', $now)
+            ->setParameter('location', $location->id);
         $entities = $qb->getQuery()->execute();
 
         if ($format == 'ics') {
@@ -117,5 +117,74 @@ class LocationController extends Controller
                 'location' => $location,
             );
         }
+    }
+
+    /**
+     * Finds and displays a Event entity.
+     *
+     * @Route("/{slug}/bearbeiten", name="location_edit")
+     * @Method("GET")
+     * @Template()
+     */
+    public function editAction($slug)
+    {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:Location');
+
+        /** @var Location $location */
+        $location = $repo->findOneBy(['slug' => $slug]);
+
+        if (!$location) {
+            throw $this->createNotFoundException('Unable to find Location entity.');
+        }
+
+        return [
+            'entity' => $location
+        ];
+    }
+
+    /**
+     * Finds and displays a Event entity.
+     *
+     * @Route("/{slug}/bearbeiten", name="location_update")
+     * @Method("POST")
+     */
+    public function updateAction(Request $request, $slug) {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:Location');
+
+        /** @var Location $location */
+        $location = $repo->findOneBy(['slug' => $slug]);
+
+        if (!$location) {
+            throw $this->createNotFoundException('Unable to find Location entity.');
+        }
+
+        if ($location->name != $request->get('name')) {
+            $location->name = $request->get('name');
+            $location->slug = $location->generateSlug($location->name,$em);
+        }
+        $location->streetaddress = $request->get('streetaddress');
+        $location->streetnumber = $request->get('streetnumber');
+        $location->zipcode = $request->get('zipcode');
+        $location->city = $request->get('city');
+
+        $latlon = $request->get('geocords');
+        $latlon = explode(',',$latlon);
+        if (count($latlon) == 2) {
+            $location->lat = $latlon[0];
+            $location->lon = $latlon[1];
+        }
+
+        $em->persist($location);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('location_show', array('slug' => $location->slug)));
     }
 }
