@@ -174,6 +174,7 @@ class LocationController extends Controller
         $location->streetnumber = $request->get('streetnumber');
         $location->zipcode = $request->get('zipcode');
         $location->city = $request->get('city');
+        $location->description = $request->get('description');
 
         $latlon = $request->get('geocords');
         $latlon = explode(',',$latlon);
