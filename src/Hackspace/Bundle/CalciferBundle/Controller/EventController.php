@@ -54,7 +54,7 @@ class EventController extends Controller
      *
      * @Route("/termine/", name="_create")
      * @Method("POST")
-     * @Template("CalciferBundle:Event:new.html.twig")
+     * @Template("CalciferBundle:Event:edit.html.twig")
      */
     public function createAction(Request $request)
     {
@@ -81,7 +81,7 @@ class EventController extends Controller
      *
      * @Route("/termine/neu", name="_new")
      * @Method("GET")
-     * @Template()
+     * @Template("CalciferBundle:Event:edit.html.twig")
      */
     public function newAction()
     {
@@ -314,7 +314,7 @@ class EventController extends Controller
      *
      * @Route("/termine/{slug}/kopieren", name="_copy")
      * @Method("GET")
-     * @Template("CalciferBundle:Event:new.html.twig")
+     * @Template("CalciferBundle:Event:edit.html.twig")
      */
     public function copyAction(Request $request, $slug) {
         /** @var EntityManager $em */
