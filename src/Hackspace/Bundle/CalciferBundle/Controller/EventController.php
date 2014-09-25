@@ -63,7 +63,8 @@ class EventController extends Controller
         $em = $this->saveEvent($request, $entity);
 
 
-        if ($entity->isValid()) {
+        $errors = $entity->isValid();
+        if ($errors === true) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -73,6 +74,7 @@ class EventController extends Controller
 
         return array(
             'entity' => $entity,
+            'errors' => $errors,
         );
     }
 
@@ -171,7 +173,8 @@ class EventController extends Controller
         $em = $this->saveEvent($request, $entity);
 
 
-        if ($entity->isValid()) {
+        $errors = $entity->isValid();
+        if ($errors === true) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -180,7 +183,8 @@ class EventController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
+            'errors' => $errors,
 
         );
     }
@@ -199,8 +203,10 @@ class EventController extends Controller
         $entity->summary = $request->get('summary');
         $entity->url = $request->get('url');
         $startdate = $request->get('startdate');
-        $startdate = new \DateTime($startdate);
-        $entity->startdate = $startdate;
+        if (strlen($startdate) > 0) {
+            $startdate = new \DateTime($startdate);
+            $entity->startdate = $startdate;
+        }
         $entity->slug = $entity->generateSlug($entity->summary,$em);
 
         $enddate = $request->get('enddate');
@@ -267,7 +273,6 @@ class EventController extends Controller
                     $entity->addTag($tag_obj);
                 }
             }
-            return $em;
         }
         return $em;
     }
