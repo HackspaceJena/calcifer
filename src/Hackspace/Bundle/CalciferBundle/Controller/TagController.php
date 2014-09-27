@@ -71,7 +71,7 @@ class TagController extends Controller
         if ($format == 'ics') {
             $calendar = new Calendar();
             $calendar->setProdId('-//My Company//Cool Calendar App//EN');
-	    $calendar->setTimeZone(new \DateTimeZone('Europe/Berlin'));
+            $calendar->setTimeZone(new \DateTimeZone('Europe/Berlin'));
 
             foreach ($entities as $entity) {
                 /** @var Event $entity */
@@ -82,6 +82,7 @@ class TagController extends Controller
                 $event->setSummary($entity->summary);
                 $event->setDescription($entity->description);
                 $event->setUrl($entity->url);
+                $event->setUid($entity->slug);
                 if ($entity->location instanceof Location) {
                     $location = new \Jsvrcek\ICS\Model\Description\Location();
                     $location->setName($entity->location->name);
