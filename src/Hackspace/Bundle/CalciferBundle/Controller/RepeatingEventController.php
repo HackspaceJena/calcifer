@@ -191,10 +191,12 @@ class RepeatingEventController extends Controller
         $location = $request->get('location');
         $location_lat = $request->get('location_lat');
         $location_lon = $request->get('location_lon');
+
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
         if (strlen($location) > 0) {
             // check if the location already exists
-            /** @var EntityManager $em */
-            $em = $this->getDoctrine()->getManager();
             $repo = $em->getRepository('CalciferBundle:Location');
             $results = $repo->findBy(['name' => $location]);
             if (count($results) > 0) {
@@ -217,7 +219,7 @@ class RepeatingEventController extends Controller
                 if (strlen($location_lon) > 0) {
                     $location_obj->lon = $location_lon;
                 }
-                $location_obj->slug = \URLify::filter($location_obj->name, 255, 'de');
+                $location_obj->slug = $location_obj->generateSlug($location_obj->name,$em);
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->location = $location_obj;
@@ -240,7 +242,7 @@ class RepeatingEventController extends Controller
                 } else {
                     $tag_obj = new Tag();
                     $tag_obj->name = $tag;
-                    $tag_obj->slug = \URLify::filter($tag_obj->name, 255, 'de');
+                    $tag_obj->slug = $tag_obj->generateSlug($tag_obj->name,$em);
                     $em->persist($tag_obj);
                     $em->flush();
                     $entity->addTag($tag_obj);
@@ -250,13 +252,60 @@ class RepeatingEventController extends Controller
             $entity->clearTags();
         }
 
-        $entity->slug = \URLify::filter($entity->summary,255,'de');
+        $entity->slug = $entity->generateSlug($entity->summary,$em);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($entity);
         $em->flush();
 
         return $entity;
+    }
 
+    /**
+     * Deletes a Event entity.
+     *
+     * @Route("/{slug}/löschen", name="repeating_event_delete")
+     * @Method({"GET", "POST"})
+     * @Template("CalciferBundle:RepeatingEvent:delete.html.twig")
+     */
+    public function deleteAction(Request $request, $slug) {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:RepeatingEvent');
+
+        /** @var Event $entity */
+        $entity = $repo->findOneBy(['slug' => $slug]);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Event entity.');
+        }
+
+
+        $confirmation = $request->get('confirmation',false);
+
+        if (($request->getMethod() == 'POST') && ($confirmation)) {
+            $em->remove($entity);
+            $em->flush();
+
+            return $this->redirect('/');
+        }
+
+        return array(
+            'entity'      => $entity,
+
+        );
+    }
+
+    /**
+     * Deletes a Event entity.
+     *
+     * @Route("/wiederholungsmuster", name="repeating_patterns")
+     * @Method({"GET", "POST"})
+     * @Template("CalciferBundle:RepeatingEvent:repeating_patterns.html.twig")
+     */
+    public function repeatingPatternsHelpAction(Request $request) {
+        return null;
     }
 }

@@ -1,0 +1,37 @@
+{% extends 'CalciferBundle::layout.html.twig' %}
+
+{% block css %}
+    {% stylesheets filter="compass"
+    "@CalciferBundle/Resources/assets/css/events.scss" %}
+    <link rel="stylesheet" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+    "@CalciferBundle/Resources/assets/js/events.js" %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block body -%}
+    <div class="ui one column page grid title">
+        <div class="ui column">
+            <h1 class="ui header">
+                Wiederholungsmuster
+            </h1>
+        </div>
+    </div>
+
+    <div class="ui one column page grid segment">
+        <div class="ui column">
+            <p>Es gibt 2 verschiedene Wiederholungsmustertypen. Feste Termine oder Interval Termine.</p>
+            <p>Der erste definiert sich dadurch das der Termin immer an einem bestimmten Tag im Monat passieren soll. Das Hackspace-Plenum findet z.B. am <code>Zweiten Freitag des Monats</code> statt. Die Sicherheitssprechstunde findet immer am <code>Ersten Dienstag des Monats</code> statt. Anhand dieser Beispiele sollte eigentlich klar sein wie dieses Wiederholungsmuster funktioniert:</p>
+            <p>An erster stelle definiert man die Woche: Erster, Zweiter, Dritter, Letzter (In manchen Fällen kann Dritter und Letzter auch identisch sein).</p>
+            <p>An zweiter stelle definiert man den Wochentag: Montag, Dienstag, Mitwoch usw.</p>
+            <p>An letzter Stelle steht noch pro Forma „des Monats“</p>
+            <p>Der zweite Wiederholungstyp ist für regelmäßige Termine wie z.B. die Elektrorunde gedacht, die <code>Alle 7 Tage</code>. Für die Brettspielerei würde man <code>Alle 2 Wochen</code> schreiben.</p>
+        </div>
+    </div>
+
+{% endblock %}

@@ -84,17 +84,4 @@ class RepeatingEvent extends BaseEntity
      *      )
      */
     protected $tags = [];
-
-    public function getFormatedRepeatPattern() {
-        switch($this->repeating_pattern) {
-            case 'P7D':
-                return 'Wöchentlich';
-            case 'P14D':
-                return 'Alle 2 Wochen';
-            case 'P1M':
-                return 'Monatlich';
-            default:
-                return $this->repeating_pattern;
-        }
-    }
 }

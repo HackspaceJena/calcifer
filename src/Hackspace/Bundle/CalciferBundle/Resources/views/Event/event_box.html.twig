@@ -4,10 +4,20 @@
                     href="{{ path('_show', { 'slug': entity.slug }) }}">{{ entity.summary }}</a>
         </h2>
 
-        <p class="edit">
+        {% if (detail|default(false)) %}
+        <p class="action">
             <a href="{{ path('_edit', {'slug' : entity.slug }) }}"><i
                         class="circular icon edit green inverted link"></i>Bearbeiten</a>
         </p>
+
+        <p class="action">
+            <a href="{{ path('_delete', {'slug' : entity.slug }) }}"><i class="circular icon delete green inverted link"></i>Löschen</a>
+        </p>
+
+        <p class="action">
+            <a href="{{ path('_copy', {'slug' : entity.slug }) }}"><i class="circular icon copy green inverted link"></i>Kopieren</a>
+        </p>
+        {% endif %}
 
         <p class="startdate ">
             <i class="circular icon calendar green inverted link" title="Wann?"

@@ -3,6 +3,7 @@
 namespace Hackspace\Bundle\CalciferBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Event
@@ -102,7 +103,18 @@ class Event extends BaseEntity
     }
 
     public function isValid() {
-        return true;
+        $errors = [];
+        if (!($this->startdate instanceof \DateTime)) {
+            $errors['startdate'] = 'Bitte gebe ein Startdatum ein.';
+        }
+        if ((!is_null($this->startdate)) && (!is_null($this->enddate)) && ($this->enddate < $this->startdate)) {
+            $errors['enddate'] = 'Bitte setze ein Enddatum das nach dem Startdatum ist.';
+        }
+        if (strlen($this->summary) == 0) {
+            $errors['summary'] = 'Bitte gebe eine Zusammenfassung an.';
+        }
+
+        return (count($errors) > 0) ? $errors : true;
     }
 
     public function getFormatedDate() {

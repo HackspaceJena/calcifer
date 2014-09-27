@@ -71,6 +71,7 @@ class TagController extends Controller
         if ($format == 'ics') {
             $calendar = new Calendar();
             $calendar->setProdId('-//My Company//Cool Calendar App//EN');
+	    $calendar->setTimeZone(new \DateTimeZone('Europe/Berlin'));
 
             foreach ($entities as $entity) {
                 /** @var Event $entity */
