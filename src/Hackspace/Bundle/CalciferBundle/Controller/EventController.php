@@ -54,7 +54,7 @@ class EventController extends Controller
      *
      * @Route("/termine/", name="_create")
      * @Method("POST")
-     * @Template("CalciferBundle:Event:new.html.twig")
+     * @Template("CalciferBundle:Event:edit.html.twig")
      */
     public function createAction(Request $request)
     {
@@ -63,7 +63,8 @@ class EventController extends Controller
         $em = $this->saveEvent($request, $entity);
 
 
-        if ($entity->isValid()) {
+        $errors = $entity->isValid();
+        if ($errors === true) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -73,6 +74,7 @@ class EventController extends Controller
 
         return array(
             'entity' => $entity,
+            'errors' => $errors,
         );
     }
 
@@ -81,7 +83,7 @@ class EventController extends Controller
      *
      * @Route("/termine/neu", name="_new")
      * @Method("GET")
-     * @Template()
+     * @Template("CalciferBundle:Event:edit.html.twig")
      */
     public function newAction()
     {
@@ -171,7 +173,8 @@ class EventController extends Controller
         $em = $this->saveEvent($request, $entity);
 
 
-        if ($entity->isValid()) {
+        $errors = $entity->isValid();
+        if ($errors === true) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -180,7 +183,8 @@ class EventController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
+            'errors' => $errors,
 
         );
     }
@@ -192,13 +196,18 @@ class EventController extends Controller
      */
     public function saveEvent(Request $request, Event $entity)
     {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
         $entity->description = $request->get('description');
         $entity->summary = $request->get('summary');
         $entity->url = $request->get('url');
         $startdate = $request->get('startdate');
-        $startdate = new \DateTime($startdate);
-        $entity->startdate = $startdate;
-        $entity->slug = \URLify::filter($entity->summary, 255, 'de');
+        if (strlen($startdate) > 0) {
+            $startdate = new \DateTime($startdate);
+            $entity->startdate = $startdate;
+        }
+        $entity->slug = $entity->generateSlug($entity->summary,$em);
 
         $enddate = $request->get('enddate');
         if (strlen($enddate) > 0) {
@@ -237,7 +246,7 @@ class EventController extends Controller
                 if (strlen($location_lon) > 0) {
                     $location_obj->lon = $location_lon;
                 }
-                $location_obj->slug = \URLify::filter($location_obj->name, 255, 'de');
+                $location_obj->slug = $location_obj->generateSlug($location->name,$em);
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($location_obj);
@@ -258,14 +267,79 @@ class EventController extends Controller
                 } else {
                     $tag_obj = new Tag();
                     $tag_obj->name = $tag;
-                    $tag_obj->slug = \URLify::filter($tag_obj->name, 255, 'de');
+                    $tag_obj->slug = $tag_obj->generateSlug($tag_obj->name,$em);
                     $em->persist($tag_obj);
                     $em->flush();
                     $entity->addTag($tag_obj);
                 }
             }
-            return $em;
         }
         return $em;
+    }
+
+    /**
+     * Deletes a Event entity.
+     *
+     * @Route("/termine/{slug}/löschen", name="_delete")
+     * @Method({"GET", "POST"})
+     * @Template("CalciferBundle:Event:delete.html.twig")
+     */
+    public function deleteAction(Request $request, $slug) {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:Event');
+
+        /** @var Event $entity */
+        $entity = $repo->findOneBy(['slug' => $slug]);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Event entity.');
+        }
+
+
+        $confirmation = $request->get('confirmation',false);
+
+        if (($request->getMethod() == 'POST') && ($confirmation)) {
+            $em->remove($entity);
+            $em->flush();
+
+            return $this->redirect('/');
+        }
+
+        return array(
+            'entity'      => $entity,
+
+        );
+    }
+
+    /**
+     * Copies a Event entity.
+     *
+     * @Route("/termine/{slug}/kopieren", name="_copy")
+     * @Method("GET")
+     * @Template("CalciferBundle:Event:edit.html.twig")
+     */
+    public function copyAction(Request $request, $slug) {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:Event');
+
+        /** @var Event $entity */
+        $entity = $repo->findOneBy(['slug' => $slug]);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Event entity.');
+        }
+
+        $entity->id = null;
+
+        return array(
+            'entity'      => $entity,
+
+        );
     }
 }

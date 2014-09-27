@@ -38,23 +38,23 @@
         </div>
 
         <div class="field">
-            <label class="control-label required" for="event_duration">Wiederholungsmuster</label>
+            <label class="control-label required" for="event_duration">Terminwiederholungsmuster</label>
 
-            <div class="ui left labeled input">
-                <div class="ui dropdown selection fluid">
-                    <input name="repeating_pattern" type="hidden" value="{{ entity.repeating_pattern|default('') }}">
+            <div class="ui left labeled input attached-label">
+                <input type="text"
+                       id="repeating_pattern"
+                       name="repeating_pattern"
+                       value="{{ entity.repeating_pattern|default('') }}"
+                       required="required"
+                       maxlength="255"
+                       class="form-control">
 
-                    <div class="default text">Bitte wähle einen Wert aus</div>
-                    <i class="dropdown icon"></i>
+                <div class="ui corner label">
+                    <i class="icon asterisk"></i>
+                </div>
 
-                    <div class="menu">
-                        <div class="item" data-value="P7D">Wöchentlich</div>
-                        <div class="item" data-value="P14D">Jede 2. Woche</div>
-                        <div class="item" data-value="P1M">Monatlich</div>
-                    </div>
-                    <div class="ui corner label">
-                        <i class="icon asterisk"></i>
-                    </div>
+                <div class="ui bottom attached label">
+                    Gebe hier ein <a href="{{ path("repeating_patterns") }}">Wiederholungsmuster</a> an.
                 </div>
             </div>
 

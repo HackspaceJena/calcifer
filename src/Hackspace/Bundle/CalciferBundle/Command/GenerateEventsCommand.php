@@ -17,6 +17,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Validator\Constraints\DateTime;
+use enko\RelativeDateParser\RelativeDateParser;
 
 class GenerateEventsCommand extends ContainerAwareCommand
 {
@@ -44,20 +46,21 @@ class GenerateEventsCommand extends ContainerAwareCommand
             $entities = $repo->findAll();
             foreach($entities as $entity) {
                 /** @var RepeatingEvent $entity */
-                $period = new \DatePeriod($entity->nextdate,new \DateInterval($entity->repeating_pattern),$end);
+                $next_date = is_null($entity->nextdate) ? new DateTime() : $entity->nextdate;
+                $parser = new RelativeDateParser($entity->repeating_pattern,$next_date,'de');
                 $event = null;
-                foreach($period as $date) {
-                    /** @var \DateTime $date */
-                    $output->writeln(sprintf("Creating Event %s for %s",$entity->summary,$date->format('Y-m-d H:i')));
+                while (($next_date = $parser->getNext()) < $end) {
+                    /** @var \DateTime $next_date */
+                    $output->writeln(sprintf("Creating Event %s for %s",$entity->summary,$next_date->format('Y-m-d H:i')));
                     $event = new Event();
                     $event->location = $entity->location;
-                    $event->startdate = $date;
+                    $event->startdate = $next_date;
                     if ($entity->duration > 0) {
                         $duration = new \DateInterval("PT".$entity->duration.'H');
                         /** @var \DateTime $enddate */
-                        $enddate = clone $date;
+                        $enddate = clone $next_date;
                         $enddate->add($duration);
-                        $entity->enddate = $enddate;
+                        $event->enddate = $enddate;
                     }
                     $event->summary = $entity->summary;
                     $event->description = $entity->description;
@@ -72,10 +75,10 @@ class GenerateEventsCommand extends ContainerAwareCommand
                     }
                     $entityManager->persist($event);
                     $entityManager->flush();
+                    $parser->setNow($next_date);
                 }
                 if (!is_null($event)) {
                     $entity->nextdate = $event->startdate;
-                    $entity->nextdate->add(new \DateInterval($entity->repeating_pattern));
                     $entityManager->persist($entity);
                     $entityManager->flush();
                 }

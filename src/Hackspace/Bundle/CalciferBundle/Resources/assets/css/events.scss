@@ -6,11 +6,15 @@
     }
   }
 
-  .startdate,.location,.url,.edit {
+  .startdate,.location,.url,.action {
     display: inline;
     margin: 0;
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
+  }
+
+  a i.icon {
+    text-decoration: none;
   }
 
   ul.tags {
@@ -38,6 +42,22 @@ form .ui.form {
   }
 }
 
-#map {
+#view-map, #map {
   height: 20rem;
+}
+
+.location-edit {
+  text-decoration: none;
+}
+
+#location-description {
+  p {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .ui.section.divider {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 }
