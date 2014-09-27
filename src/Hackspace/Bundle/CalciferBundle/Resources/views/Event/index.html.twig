@@ -28,6 +28,7 @@
             </h1>
             {% if tag|default(false) %}
                 <a href="{{ path('tag_show',{'slug' : tag.slug }) }}.ics"><i class="icon calendar"></i>Link zur Kalenderdatei</a>
+            {% endif %}
             {% if location|default(false) %}
                 {% if (location.description|length > 0) or location.hasAddress() %}
                     <div id="location-description" class="ui message green">
