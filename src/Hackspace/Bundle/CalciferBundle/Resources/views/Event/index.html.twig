@@ -24,7 +24,7 @@
             <h1>
                 Termine
                 {% if tag|default(false) %} für Tag „{{ tag.name }}“{% endif %}
-                {% if location|default(false) %} für Ort „{{ location.name }}“ <a class="location-edit" href="{{ path("location_edit",{slug:location.slug}) }}"><i class="ui icon edit inverted green circular link"></i> </a> {% endif %}
+                {% if location|default(false) %} für Ort „{{ location.name }}“ <a class="location-edit" href="{{ path("location_edit",{slug:location.slug}) }}"><i class="ui icon edit inverted green circular link" data-content="Ort bearbeiten" title="Ort bearbeiten"></i> </a> {% endif %}
             </h1>
             {% if tag|default(false) %}
                 <a href="{{ path('tag_show',{'slug' : tag.slug }) }}.ics"><i class="icon calendar"></i>Link zur Kalenderdatei</a>
