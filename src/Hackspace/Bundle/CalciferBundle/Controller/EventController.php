@@ -246,7 +246,7 @@ class EventController extends Controller
                 if (strlen($location_lon) > 0) {
                     $location_obj->lon = $location_lon;
                 }
-                $location_obj->slug = $location_obj->generateSlug($location->name,$em);
+                $location_obj->slug = $location_obj->generateSlug($location_obj->name,$em);
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($location_obj);
