@@ -60,7 +60,7 @@ class GenerateEventsCommand extends ContainerAwareCommand
                         /** @var \DateTime $enddate */
                         $enddate = clone $next_date;
                         $enddate->add($duration);
-                        $entity->enddate = $enddate;
+                        $event->enddate = $enddate;
                     }
                     $event->summary = $entity->summary;
                     $event->description = $entity->description;

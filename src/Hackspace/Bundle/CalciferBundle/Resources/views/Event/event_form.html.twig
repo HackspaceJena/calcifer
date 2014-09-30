@@ -1,6 +1,6 @@
 <form method="post" action="{% if entity.id|default(0) > 0 %}{{ path('_update',{'slug':entity.slug}) }}{% else %}{{ path('_create') }}{% endif %}">
     <div class="ui form segment">
-        <div class="field">
+        <div class="field{% if(errors|default('0') != 0) %} {% if('startdate' in errors|keys) %}error{% endif %}{% endif %}">
             <label class="control-label required" for="event_startdate">Startdatum</label>
 
             <div class="ui left labeled icon input">
@@ -11,6 +11,9 @@
                        value="{{ entity.startdate.format('Y-m-d H:i')|default('') }}"
                        placeholder="{{ "now"|date('Y-m-d H:i') }}"
                        class="form-control">
+                {% if(errors|default('0') != 0) %} {% if('startdate' in errors|keys) %}
+                <div class="ui red pointing above ui label">{{ errors.startdate }}</div>
+                {% endif %}{% endif %}
 
                 <i class="icon calendar"></i>
 
@@ -19,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <div class="field">
+        <div class="field{% if(errors|default('0') != 0) %} {% if('enddate' in errors|keys) %}error{% endif %}{% endif %}">
             <label class="control-label required" for="event_enddate">Enddatum</label>
 
             <div class="ui left labeled icon input">
@@ -30,10 +33,14 @@
                        placeholder="{{ "now"|date('Y-m-d H:i') }}"
                        class="form-control">
 
+                {% if(errors|default('0') != 0) %} {% if('enddate' in errors|keys) %}
+                    <div class="ui red pointing above ui label">{{ errors.enddate }}</div>
+                {% endif %}{% endif %}
+
                 <i class="icon calendar"></i>
             </div>
         </div>
-        <div class="field">
+        <div class="field{% if(errors|default('0') != 0) %} {% if('summary' in errors|keys) %}error{% endif %}{% endif %}">
             <label class="" for="event_summary">Zusammenfassung</label>
 
             <div class="ui left labeled input">
@@ -44,6 +51,10 @@
                        required="required"
                        maxlength="255"
                        class="form-control">
+
+                {% if(errors|default('0') != 0) %} {% if('summary' in errors|keys) %}
+                    <div class="ui red pointing above ui label">{{ errors.summary }}</div>
+                {% endif %}{% endif %}
 
                 <div class="ui corner label">
                     <i class="icon asterisk"></i>

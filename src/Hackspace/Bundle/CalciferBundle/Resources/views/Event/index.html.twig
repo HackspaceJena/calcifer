@@ -3,6 +3,7 @@
 {% block css %}
     {% stylesheets filter="compass"
         "@CalciferBundle/Resources/assets/css/events.scss"
+    "@CalciferBundle/Resources/assets/css/leaflet.scss"
     %}
         <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
@@ -11,6 +12,7 @@
 {% block javascripts %}
     {% javascripts
     "@CalciferBundle/Resources/assets/js/events.js"
+    "@CalciferBundle/Resources/assets/js/leaflet.js"
     %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
@@ -22,8 +24,47 @@
             <h1>
                 Termine
                 {% if tag|default(false) %} für Tag „{{ tag.name }}“{% endif %}
-                {% if location|default(false) %} für Ort „{{ location.name }}“{% endif %}
+                {% if location|default(false) %} für Ort „{{ location.name }}“ <a class="location-edit" href="{{ path("location_edit",{slug:location.slug}) }}"><i class="ui icon edit inverted green circular link" data-content="Ort bearbeiten" title="Ort bearbeiten"></i> </a> {% endif %}
             </h1>
+            {% if tag|default(false) %}
+                <a href="{{ path('tag_show',{'slug' : tag.slug }) }}.ics"><i class="icon calendar"></i>Link zur Kalenderdatei</a>
+            {% endif %}
+            {% if location|default(false) %}
+                {% if (location.description|length > 0) or location.hasAddress() %}
+                    <div id="location-description" class="ui message green">
+                        {% if (location.description|length > 0) %}
+                            <p>{{ location.description|markdown }}</p>
+                        {% endif %}
+                        {% if (location.hasAddress()) %}
+                            <div class="ui section divider"></div>
+                            <p>
+                                Anschrift:<br/>
+                                {{ location.streetaddress }}{% if(location.streetnumber|length > 0) %} {{ location.streetnumber }}{% endif %}<br/>
+                                {% if(location.zipcode|length > 0) %}{{ location.zipcode }} {% endif %}{{ location.city }}
+                            </p>
+                        {% endif %}
+                        {% if ((location.lon > 0) and (location.lat > 0)) %}
+                            <p><a href="" class="show_map">Auf einer OpenStreetMap-Karte anzeigen</a></p>
+                            <div class="ui modal geo viewer">
+                                <i class="close icon"></i>
+                                <div class="header">
+                                    {{ location.name }}<br/>
+                                    {{ location.streetaddress }}{% if(location.streetnumber|length > 0) %} {{ location.streetnumber }}{% endif %}<br/>
+                                    {% if(location.zipcode|length > 0) %}{{ location.zipcode }} {% endif %}{{ location.city }}
+                                </div>
+                                <div class="content">
+                                    <div id="view-map" data-lat="{{ location.lat }}" data-lon="{{ location.lon }}"></div>
+                                </div>
+                                <div class="actions">
+                                    <div class="ui button ok">
+                                        Schließen
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endif %}
         </div>
     </div>
 

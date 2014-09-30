@@ -54,7 +54,7 @@ class EventController extends Controller
      *
      * @Route("/termine/", name="_create")
      * @Method("POST")
-     * @Template("CalciferBundle:Event:new.html.twig")
+     * @Template("CalciferBundle:Event:edit.html.twig")
      */
     public function createAction(Request $request)
     {
@@ -63,7 +63,8 @@ class EventController extends Controller
         $em = $this->saveEvent($request, $entity);
 
 
-        if ($entity->isValid()) {
+        $errors = $entity->isValid();
+        if ($errors === true) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -73,6 +74,7 @@ class EventController extends Controller
 
         return array(
             'entity' => $entity,
+            'errors' => $errors,
         );
     }
 
@@ -81,7 +83,7 @@ class EventController extends Controller
      *
      * @Route("/termine/neu", name="_new")
      * @Method("GET")
-     * @Template()
+     * @Template("CalciferBundle:Event:edit.html.twig")
      */
     public function newAction()
     {
@@ -171,7 +173,8 @@ class EventController extends Controller
         $em = $this->saveEvent($request, $entity);
 
 
-        if ($entity->isValid()) {
+        $errors = $entity->isValid();
+        if ($errors === true) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -180,7 +183,8 @@ class EventController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
+            'errors' => $errors,
 
         );
     }
@@ -199,8 +203,10 @@ class EventController extends Controller
         $entity->summary = $request->get('summary');
         $entity->url = $request->get('url');
         $startdate = $request->get('startdate');
-        $startdate = new \DateTime($startdate);
-        $entity->startdate = $startdate;
+        if (strlen($startdate) > 0) {
+            $startdate = new \DateTime($startdate);
+            $entity->startdate = $startdate;
+        }
         $entity->slug = $entity->generateSlug($entity->summary,$em);
 
         $enddate = $request->get('enddate');
@@ -240,7 +246,7 @@ class EventController extends Controller
                 if (strlen($location_lon) > 0) {
                     $location_obj->lon = $location_lon;
                 }
-                $location_obj->slug = $location_obj->generateSlug($location->name,$em);
+                $location_obj->slug = $location_obj->generateSlug($location_obj->name,$em);
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($location_obj);
@@ -267,7 +273,6 @@ class EventController extends Controller
                     $entity->addTag($tag_obj);
                 }
             }
-            return $em;
         }
         return $em;
     }
@@ -314,7 +319,7 @@ class EventController extends Controller
      *
      * @Route("/termine/{slug}/kopieren", name="_copy")
      * @Method("GET")
-     * @Template("CalciferBundle:Event:new.html.twig")
+     * @Template("CalciferBundle:Event:edit.html.twig")
      */
     public function copyAction(Request $request, $slug) {
         /** @var EntityManager $em */

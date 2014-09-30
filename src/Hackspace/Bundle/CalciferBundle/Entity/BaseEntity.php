@@ -56,7 +56,11 @@ abstract class BaseEntity {
 
     public function __set($name,$value) {
         if (property_exists($this,$name)) {
-            $this->$name = $value;
+            if ($value == '') {
+                $this->$name = null;
+            } else {
+                $this->$name = $value;
+            }
             return $this;
         } else {
             throw new \Exception("Property {$name} does not Exists");
