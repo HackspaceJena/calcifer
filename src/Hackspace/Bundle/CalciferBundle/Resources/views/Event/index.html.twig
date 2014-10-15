@@ -23,7 +23,22 @@
         <div class="ui column">
             <h1>
                 Termine
-                {% if tag|default(false) %} für Tag „{{ tag.name }}“{% endif %}
+                {% if tags|default(false) %}
+                    {% if tags|length == 1 %}
+                        für Tag {{ tags[0].name }}
+                    {% elseif(tags|length == 2) %}
+                        für die Tags {{ tags[0].name }} {% if operator == 'or' %}oder{% else %}und{% endif %} {{ tags[1].name }}
+                    {% else %}
+                        für die Tags
+                        {% for tag in tags %}
+                            {% if not loop.last %}
+                                {{ tag.name }}{% if loop.index < (tags|length - 1) %},{% endif %}
+                            {% else %}
+                                {% if operator == 'or' %}oder{% else %}und{% endif %} {{ tag.name }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
                 {% if location|default(false) %} für Ort „{{ location.name }}“ <a class="location-edit" href="{{ path("location_edit",{slug:location.slug}) }}"><i class="ui icon edit inverted green circular link" data-content="Ort bearbeiten" title="Ort bearbeiten"></i> </a> {% endif %}
             </h1>
             {% if tag|default(false) %}
@@ -68,10 +83,18 @@
         </div>
     </div>
 
-    <div class="ui three column page grid stackable">
-        {% for entity in entities %}
-            {{ include('CalciferBundle:Event:event_box.html.twig',{'truncate_summary':true}) }}
-        {% endfor %}
-    </div>
+    {% if entities|length > 0 %}
+        <div class="ui three column page grid stackable">
+            {% for entity in entities %}
+                {{ include('CalciferBundle:Event:event_box.html.twig',{'truncate_summary':true}) }}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="ui one column page grid stackable">
+            <div class="ui column">
+                <p>Es konnten keine Termine gefunden werden.</p>
+            </div>
+        </div>
+    {% endif %}
 
 {% endblock %}
