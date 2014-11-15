@@ -2,8 +2,20 @@
 
 namespace Hackspace\Bundle\CalciferBundle\Entity;
 
+
+
 use Doctrine\ORM\Mapping as ORM;
+use Jsvrcek\ICS\Model\Description\Location;
 use Symfony\Component\Validator\Constraints\DateTime;
+use Jsvrcek\ICS\Model\Calendar;
+use Jsvrcek\ICS\Model\CalendarEvent;
+use Jsvrcek\ICS\Model\Relationship\Attendee;
+use Jsvrcek\ICS\Model\Relationship\Organizer;
+
+use Jsvrcek\ICS\Utility\Formatter;
+use Jsvrcek\ICS\CalendarStream;
+use Jsvrcek\ICS\CalendarExport;
+use Jsvrcek\ICS\Model\Description\Geo;
 
 /**
  * Event
@@ -128,5 +140,28 @@ class Event extends BaseEntity
             }
         }
         return $retval;
+    }
+
+
+    public function ConvertToCalendarEvent() {
+        $event = new CalendarEvent();
+        $event->setStart($this->startdate);
+        if ($this->enddate instanceof \DateTime)
+            $event->setEnd($this->enddate);
+        $event->setSummary($this->summary);
+        $event->setUrl($this->url);
+        if ($this->location instanceof Location) {
+            $location = new Location();
+            $location->setName($this->location->name);
+            $event->setLocations([$location]);
+            if (\is_float($this->location->lon) && \is_float($this->location->lat)) {
+                $geo = new Geo();
+                $geo->setLatitude($this->location->lat);
+                $geo->setLongitude($this->location->lon);
+                $event->setGeo($geo);
+            }
+        }
+        $event->setDescription($this->description);
+        return $event;
     }
 }

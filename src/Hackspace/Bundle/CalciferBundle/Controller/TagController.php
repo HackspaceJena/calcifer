@@ -50,9 +50,9 @@ class TagController extends Controller
         $repo = $em->getRepository('CalciferBundle:Tag');
         $tags = [];
         $operator = 'or';
-        if (strpos($slug,'|') !== false) {
-            $slugs = explode('|',$slug);
-            foreach($slugs as $item) {
+        if (strpos($slug, '|') !== false) {
+            $slugs = explode('|', $slug);
+            foreach ($slugs as $item) {
                 /** @var Tag $tag */
                 $tag = $repo->findOneBy(['slug' => $item]);
 
@@ -60,10 +60,10 @@ class TagController extends Controller
                     $tags[] = $tag;
                 }
             }
-        } else if (strpos($slug,'&') !== false) {
-            $slugs = explode('&',$slug);
+        } else if (strpos($slug, '&') !== false) {
+            $slugs = explode('&', $slug);
             $operator = 'and';
-            foreach($slugs as $item) {
+            foreach ($slugs as $item) {
                 /** @var Tag $tag */
                 $tag = $repo->findOneBy(['slug' => $item]);
 
@@ -103,7 +103,7 @@ WHERE tags @> array[@tags@]
 AND e.startdate >= :startdate
 ORDER BY e.startdate
 EOF;
-            $tag_ids = array_reduce($tags,function($carry,$item){
+            $tag_ids = array_reduce($tags, function ($carry, $item) {
                 if (strlen($carry) == 0) {
                     return $item->id;
                 } else {
@@ -111,14 +111,14 @@ EOF;
                 }
             });
 
-            $sql = str_replace('@tags@',$tag_ids,$sql);
+            $sql = str_replace('@tags@', $tag_ids, $sql);
 
             $rsm = new ResultSetMappingBuilder($em);
-            $rsm->addRootEntityFromClassMetadata('CalciferBundle:Event','e');
+            $rsm->addRootEntityFromClassMetadata('CalciferBundle:Event', 'e');
 
-            $query = $em->createNativeQuery($sql,$rsm);
+            $query = $em->createNativeQuery($sql, $rsm);
 
-            $query->setParameter('startdate',$now);
+            $query->setParameter('startdate', $now);
 
             $entities = $query->getResult();
 
@@ -131,7 +131,7 @@ EOF;
                 ->orderBy('e.startdate')
                 ->setParameter('startdate', $now);
 
-            $qb->join('e.tags', 't', 'WITH', $qb->expr()->in('t.id', array_reduce($tags,function($carry,$item){
+            $qb->join('e.tags', 't', 'WITH', $qb->expr()->in('t.id', array_reduce($tags, function ($carry, $item) {
                 if (strlen($carry) == 0) {
                     return $item->id;
                 } else {
@@ -148,25 +148,7 @@ EOF;
 
             foreach ($entities as $entity) {
                 /** @var Event $entity */
-                $event = new CalendarEvent();
-                $event->setStart($entity->startdate);
-                if ($entity->enddate instanceof \DateTime)
-                    $event->setEnd($entity->enddate);
-                $event->setSummary($entity->summary);
-                $event->setDescription($entity->description);
-                $event->setUrl($entity->url);
-                $event->setUid($entity->slug);
-                if ($entity->location instanceof Location) {
-                    $location = new \Jsvrcek\ICS\Model\Description\Location();
-                    $location->setName($entity->location->name);
-                    $event->setLocations([$location]);
-                    if (\is_float($entity->location->lon) && \is_float($entity->location->lat)) {
-                        $geo = new Geo();
-                        $geo->setLatitude($entity->location->lat);
-                        $geo->setLongitude($entity->location->lon);
-                        $event->setGeo($geo);
-                    }
-                }
+                $event = $entity->ConvertToCalendarEvent();
                 $calendar->addEvent($event);
             }
 

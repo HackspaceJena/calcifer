@@ -17,14 +17,9 @@ use Hackspace\Bundle\CalciferBundle\Entity\Event;
 use Hackspace\Bundle\CalciferBundle\Form\EventType;
 use Symfony\Component\HttpFoundation\Response;
 use Jsvrcek\ICS\Model\Calendar;
-use Jsvrcek\ICS\Model\CalendarEvent;
-use Jsvrcek\ICS\Model\Relationship\Attendee;
-use Jsvrcek\ICS\Model\Relationship\Organizer;
-
 use Jsvrcek\ICS\Utility\Formatter;
 use Jsvrcek\ICS\CalendarStream;
 use Jsvrcek\ICS\CalendarExport;
-use Jsvrcek\ICS\Model\Description\Geo;
 
 /**
  * Location controller.
@@ -77,27 +72,7 @@ class LocationController extends Controller
 
             foreach ($entities as $entity) {
                 /** @var Event $entity */
-                $event = new CalendarEvent();
-                $event->setStart($entity->startdate);
-                if ($entity->enddate instanceof \DateTime)
-                    $event->setEnd($entity->enddate);
-                $event->setSummary($entity->summary);
-                $event->setUrl($entity->url);
-                if ($entity->location instanceof Location) {
-                    $location = new \Jsvrcek\ICS\Model\Description\Location();
-                    $location->setName($entity->location->name);
-                    $event->setLocations([$location]);
-                    if (\is_float($entity->location->lon) && \is_float($entity->location->lat)) {
-                        $geo = new Geo();
-                        $geo->setLatitude($entity->location->lat);
-                        $geo->setLongitude($entity->location->lon);
-                        $event->setGeo($geo);
-                    }
-                }
-                $event->setDescription($entity->description);
-                $location = new \Jsvrcek\ICS\Model\Description\Location();
-                $location->setName($entity->getLocation()->name);
-                $event->setLocations([$location]);
+                $event = $entity->ConvertToCalendarEvent();
                 $calendar->addEvent($event);
             }
 
@@ -152,7 +127,8 @@ class LocationController extends Controller
      * @Route("/{slug}/bearbeiten", name="location_update")
      * @Method("POST")
      */
-    public function updateAction(Request $request, $slug) {
+    public function updateAction(Request $request, $slug)
+    {
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
@@ -168,7 +144,7 @@ class LocationController extends Controller
 
         if ($location->name != $request->get('name')) {
             $location->name = $request->get('name');
-            $location->slug = $location->generateSlug($location->name,$em);
+            $location->slug = $location->generateSlug($location->name, $em);
         }
         $location->streetaddress = $request->get('streetaddress');
         $location->streetnumber = $request->get('streetnumber');
@@ -177,7 +153,7 @@ class LocationController extends Controller
         $location->description = $request->get('description');
 
         $latlon = $request->get('geocords');
-        $latlon = explode(',',$latlon);
+        $latlon = explode(',', $latlon);
         if (count($latlon) == 2) {
             $location->lat = $latlon[0];
             $location->lon = $latlon[1];
