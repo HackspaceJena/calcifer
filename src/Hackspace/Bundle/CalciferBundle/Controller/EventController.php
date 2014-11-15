@@ -14,6 +14,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Hackspace\Bundle\CalciferBundle\Entity\Event;
 use Hackspace\Bundle\CalciferBundle\Form\EventType;
+use Symfony\Component\HttpFoundation\Response;
+use
+    Sabre\VObject,
+    Sabre\CalDAV,
+    Sabre\DAV,
+    Sabre\DAVACL,
+    Sabre\DAV\Exception\Forbidden,
+    Hackspace\Bundle\CalciferBundle\libs\CalciferCaldavBackend,
+    Hackspace\Bundle\CalciferBundle\libs\CalciferPrincipalBackend;
 
 /**
  * Event controller.
@@ -22,6 +31,45 @@ use Hackspace\Bundle\CalciferBundle\Form\EventType;
  */
 class EventController extends Controller
 {
+    /**
+     * Finds and displays a Event entity.
+     *
+     * @Route("/{url}", name="events_caldav", requirements={"url" : "caldav(.+)"})
+     */
+    public function caldavEntry()
+    {
+        // Backends
+        $calendarBackend = new CalciferCaldavBackend($this);
+        $principalBackend = new CalciferPrincipalBackend();
+        // Directory structure
+        $tree = [
+            new CalDAV\CalendarRootNode($principalBackend, $calendarBackend),
+        ];
+
+        $server = new DAV\Server($tree);
+
+        $server->setBaseUri('/caldav');
+
+        /*$aclPlugin = new DAVACL\Plugin();
+        $aclPlugin->allowAccessToNodesWithoutACL = false;
+        $server->addPlugin($aclPlugin);*/
+
+        /* CalDAV support */
+        $caldavPlugin = new CalDAV\Plugin();
+        $server->addPlugin($caldavPlugin);
+
+        /* WebDAV-Sync plugin */
+        $server->addPlugin(new DAV\Sync\Plugin());
+
+// Support for html frontend
+        $browser = new DAV\Browser\Plugin();
+        $server->addPlugin($browser);
+
+// And off we go!
+        $server->exec();
+        return new Response();
+    }
+
 
     /**
      * Lists all Event entities.
@@ -35,20 +83,21 @@ class EventController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $now = new \DateTime();
-        $now->setTime(0,0,0);
+        $now->setTime(0, 0, 0);
         /** @var QueryBuilder $qb */
         $qb = $em->createQueryBuilder();
-        $qb ->select(array('e'))
+        $qb->select(array('e'))
             ->from('CalciferBundle:Event', 'e')
             ->where('e.startdate >= :startdate')
             ->orderBy('e.startdate')
-            ->setParameter('startdate',$now);
+            ->setParameter('startdate', $now);
         $entities = $qb->getQuery()->execute();
 
         return array(
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new Event entity.
      *
@@ -117,7 +166,7 @@ class EventController extends Controller
         }
 
         return array(
-            'entity'      => $entity
+            'entity' => $entity
         );
     }
 
@@ -144,7 +193,7 @@ class EventController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
         );
     }
 
@@ -207,7 +256,7 @@ class EventController extends Controller
             $startdate = new \DateTime($startdate);
             $entity->startdate = $startdate;
         }
-        $entity->slug = $entity->generateSlug($entity->summary,$em);
+        $entity->slug = $entity->generateSlug($entity->summary, $em);
 
         $enddate = $request->get('enddate');
         if (strlen($enddate) > 0) {
@@ -246,7 +295,7 @@ class EventController extends Controller
                 if (strlen($location_lon) > 0) {
                     $location_obj->lon = $location_lon;
                 }
-                $location_obj->slug = $location_obj->generateSlug($location_obj->name,$em);
+                $location_obj->slug = $location_obj->generateSlug($location_obj->name, $em);
                 $em->persist($location_obj);
                 $em->flush();
                 $entity->setLocation($location_obj);
@@ -267,7 +316,7 @@ class EventController extends Controller
                 } else {
                     $tag_obj = new Tag();
                     $tag_obj->name = $tag;
-                    $tag_obj->slug = $tag_obj->generateSlug($tag_obj->name,$em);
+                    $tag_obj->slug = $tag_obj->generateSlug($tag_obj->name, $em);
                     $em->persist($tag_obj);
                     $em->flush();
                     $entity->addTag($tag_obj);
@@ -284,7 +333,8 @@ class EventController extends Controller
      * @Method({"GET", "POST"})
      * @Template("CalciferBundle:Event:delete.html.twig")
      */
-    public function deleteAction(Request $request, $slug) {
+    public function deleteAction(Request $request, $slug)
+    {
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
@@ -299,7 +349,7 @@ class EventController extends Controller
         }
 
 
-        $confirmation = $request->get('confirmation',false);
+        $confirmation = $request->get('confirmation', false);
 
         if (($request->getMethod() == 'POST') && ($confirmation)) {
             $em->remove($entity);
@@ -309,7 +359,7 @@ class EventController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
 
         );
     }
@@ -321,7 +371,8 @@ class EventController extends Controller
      * @Method("GET")
      * @Template("CalciferBundle:Event:edit.html.twig")
      */
-    public function copyAction(Request $request, $slug) {
+    public function copyAction(Request $request, $slug)
+    {
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
@@ -338,7 +389,7 @@ class EventController extends Controller
         $entity->id = null;
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
 
         );
     }
