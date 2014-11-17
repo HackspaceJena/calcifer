@@ -5,7 +5,7 @@ namespace Hackspace\Bundle\CalciferBundle\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
-use Jsvrcek\ICS\Model\Description\Location;
+use Jsvrcek\ICS\Model\Description\Location As EventLocation;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Jsvrcek\ICS\Model\Calendar;
 use Jsvrcek\ICS\Model\CalendarEvent;
@@ -151,7 +151,7 @@ class Event extends BaseEntity
         $event->setSummary($this->summary);
         $event->setUrl($this->url);
         if ($this->location instanceof Location) {
-            $location = new Location();
+            $location = new EventLocation();
             $location->setName($this->location->name);
             $event->setLocations([$location]);
             if (\is_float($this->location->lon) && \is_float($this->location->lat)) {
@@ -161,7 +161,7 @@ class Event extends BaseEntity
                 $event->setGeo($geo);
             }
         }
-        $event->setDescription($this->description);
+        $event->setDescription(str_replace("\r","",str_replace("\n",'\n',$this->description)));
         return $event;
     }
 }
