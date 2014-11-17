@@ -8,7 +8,8 @@
 
 namespace Hackspace\Bundle\CalciferBundle\libs;
 
-
+use Jsvrcek\ICS\Model\Calendar;
+use Jsvrcek\ICS\CalendarExport;
 use Jsvrcek\ICS\CalendarStream;
 use Jsvrcek\ICS\Model\CalendarEvent;
 use Jsvrcek\ICS\Utility\Formatter;
@@ -135,11 +136,19 @@ class CalciferCaldavBackend extends AbstractBackend
     {
         /** @var CalendarEvent $calendar_event */
         $calendar_event = $event->ConvertToCalendarEvent();
-        $calendar_data = $this->FormatCalendarEvent($calendar_event);
+        $calendar = new Calendar();
+        $calendar->setProdId('-//My Company//Cool Calendar App//EN');
+	$calendar->addEvent($calendar_event);
+        $calendarExport = new CalendarExport(new CalendarStream, new Formatter());
+        $calendarExport->addCalendar($calendar);
+
+            //output .ics formatted text
+        $calendar_data = $calendarExport->getStream();
+
 
         $event_data = [
             'id' => $event->id,
-            'uri' => $event->slug,
+            'uri' => $event->slug . '.ics',
             'lastmodified' => $event->startdate,
             'etag' => '"' . sha1($calendar_data) . '"',
             'calendarid' => 1,
@@ -234,7 +243,7 @@ class CalciferCaldavBackend extends AbstractBackend
         $repo = $em->getRepository('CalciferBundle:Event');
 
         /** @var Event $entity */
-        $event = $repo->findOneBy(['slug' => $objectUri]);
+        $event = $repo->findOneBy(['slug' => substr($objectUri,0,strlen($objectUri) - 4)]);
 
         if (!($event instanceof Event)) {
             throw $this->controller->createNotFoundException('Unable to find Event entity.');
