@@ -15,6 +15,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Hackspace\Bundle\CalciferBundle\Entity\Event;
 use Hackspace\Bundle\CalciferBundle\Form\EventType;
 use Symfony\Component\HttpFoundation\Response;
+use Jsvrcek\ICS\Model\Calendar;
+use Jsvrcek\ICS\Utility\Formatter;
+use Jsvrcek\ICS\CalendarStream;
+use Jsvrcek\ICS\CalendarExport;
 use
     Sabre\VObject,
     Sabre\CalDAV,
@@ -68,6 +72,49 @@ class EventController extends Controller
 // And off we go!
         $server->exec();
         return new Response();
+    }
+
+    /**
+     * Lists all Event entities as ICS.
+     *
+     * @Route("/all.ics", name="events_ics")
+     * @Method("GET")
+     * @Template()
+     */
+    public function allEventsAsICSAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $now = new \DateTime();
+        $now->setTime(0, 0, 0);
+        /** @var QueryBuilder $qb */
+        $qb = $em->createQueryBuilder();
+        $qb->select(array('e'))
+            ->from('CalciferBundle:Event', 'e')
+            ->where('e.startdate >= :startdate')
+            ->orderBy('e.startdate')
+            ->setParameter('startdate', $now);
+        $entities = $qb->getQuery()->execute();
+
+        $calendar = new Calendar();
+        $calendar->setProdId('-//My Company//Cool Calendar App//EN');
+
+        foreach ($entities as $entity) {
+          /** @var Event $entity */
+          $event = $entity->ConvertToCalendarEvent();
+          $calendar->addEvent($event);
+        }
+
+        $calendarExport = new CalendarExport(new CalendarStream, new Formatter());
+        $calendarExport->addCalendar($calendar);
+
+        //output .ics formatted text
+        $result = $calendarExport->getStream();
+
+        $response = new Response($result);
+        $response->headers->set('Content-Type', 'text/calendar');
+
+        return $response;
     }
 
 
