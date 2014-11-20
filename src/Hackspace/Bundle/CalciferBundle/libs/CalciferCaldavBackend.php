@@ -203,7 +203,6 @@ class CalciferCaldavBackend extends AbstractBackend
         $qb = $em->createQueryBuilder();
         $qb->select(array('e'))
             ->from('CalciferBundle:Event', 'e')
-            ->where('e.startdate >= :startdate')
             ->orderBy('e.startdate');
         $entities = $qb->getQuery()->execute();
 
