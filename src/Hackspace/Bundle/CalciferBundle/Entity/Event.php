@@ -150,6 +150,7 @@ class Event extends BaseEntity
             $event->setEnd($this->enddate);
         $event->setSummary($this->summary);
         $event->setUrl($this->url);
+        $event->setUid($this->id);
         if ($this->location instanceof Location) {
             $location = new EventLocation();
             $location->setName($this->location->name);
