@@ -204,8 +204,7 @@ class CalciferCaldavBackend extends AbstractBackend
         $qb->select(array('e'))
             ->from('CalciferBundle:Event', 'e')
             ->where('e.startdate >= :startdate')
-            ->orderBy('e.startdate')
-            ->setParameter('startdate', $now);
+            ->orderBy('e.startdate');
         $entities = $qb->getQuery()->execute();
 
         if (count($entities) > 0) {
