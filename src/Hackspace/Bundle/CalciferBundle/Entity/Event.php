@@ -150,7 +150,8 @@ class Event extends BaseEntity
             $event->setEnd($this->enddate);
         $event->setSummary($this->summary);
         $event->setUrl($this->url);
-        $event->setUid($this->id);
+        $uid = sprintf("https://%s/termine/%s",$_SERVER['HTTP_HOST'],$this->slug);
+        $event->setUid($uid);
         if (count($this->tags) > 0) {
             $categories = [];
             foreach($this->tags as $tag) {
