@@ -109,7 +109,7 @@ class CalciferPrincipalBackend extends DAVACL\PrincipalBackend\AbstractBackend
      * @param array $searchProperties
      * @return array
      */
-    function searchPrincipals($prefixPath, array $searchProperties)
+    function searchPrincipals($prefixPath, array $searchProperties, $test = 'allof')
     {
         return [
             [
