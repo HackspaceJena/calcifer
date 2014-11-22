@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c0dd295d10e8821f679de1dc090aa14e",
+    "hash": "6771cfbdeebb8bc4a8a5ca0071bbf312",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -732,16 +732,16 @@
         },
         {
             "name": "enko/ics",
-            "version": "0.1.0",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/enko/ICS.git",
-                "reference": "60416fc3842a7b4ee4f0938b8c35c96b402fee32"
+                "reference": "b1e4f9a725476cc36d5447c219cdb9bc06e62518"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/enko/ICS/zipball/60416fc3842a7b4ee4f0938b8c35c96b402fee32",
-                "reference": "60416fc3842a7b4ee4f0938b8c35c96b402fee32",
+                "url": "https://api.github.com/repos/enko/ICS/zipball/b1e4f9a725476cc36d5447c219cdb9bc06e62518",
+                "reference": "b1e4f9a725476cc36d5447c219cdb9bc06e62518",
                 "shasum": ""
             },
             "require": {
@@ -780,7 +780,7 @@
                 "ical",
                 "multi-byte safe"
             ],
-            "time": "2014-07-30 23:43:46"
+            "time": "2014-11-22 15:55:19"
         },
         {
             "name": "enko/relativedateparser",
@@ -1285,16 +1285,16 @@
         },
         {
             "name": "sabre/dav",
-            "version": "2.0.5",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fruux/sabre-dav.git",
-                "reference": "e390d39ebfc701543459370e89a16d2d71910bda"
+                "reference": "0f192d4844b99552542ed086940813210b9ddc19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fruux/sabre-dav/zipball/e390d39ebfc701543459370e89a16d2d71910bda",
-                "reference": "e390d39ebfc701543459370e89a16d2d71910bda",
+                "url": "https://api.github.com/repos/fruux/sabre-dav/zipball/0f192d4844b99552542ed086940813210b9ddc19",
+                "reference": "0f192d4844b99552542ed086940813210b9ddc19",
                 "shasum": ""
             },
             "require": {
@@ -1308,13 +1308,14 @@
                 "ext-simplexml": "*",
                 "ext-spl": "*",
                 "php": ">=5.4.1",
-                "sabre/event": "~1.0.0",
-                "sabre/http": "~2.0.2",
-                "sabre/vobject": "~3.3.0"
+                "sabre/event": "~2.0.0",
+                "sabre/http": "~3.0.0",
+                "sabre/vobject": "~3.3.4"
             },
             "require-dev": {
-                "evert/phpdoc-md": "~0.0.7",
-                "phpunit/phpunit": "~4.2"
+                "evert/phpdoc-md": "~0.1.0",
+                "phpunit/phpunit": "~4.2",
+                "squizlabs/php_codesniffer": "~1.5.3"
             },
             "suggest": {
                 "ext-curl": "*",
@@ -1346,7 +1347,7 @@
                 }
             ],
             "description": "WebDAV Framework for PHP",
-            "homepage": "http://code.google.com/p/sabredav/",
+            "homepage": "http://sabre.io/",
             "keywords": [
                 "CalDAV",
                 "CardDAV",
@@ -1354,20 +1355,20 @@
                 "framework",
                 "iCalendar"
             ],
-            "time": "2014-10-14 16:14:28"
+            "time": "2014-11-20 04:52:55"
         },
         {
             "name": "sabre/event",
-            "version": "1.0.1",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fruux/sabre-event.git",
-                "reference": "5ee3adf5441c2fe53b8ceacff6db81e621ee884c"
+                "reference": "f33d60742d7dff63d3722d0f70016704bf32e8db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fruux/sabre-event/zipball/5ee3adf5441c2fe53b8ceacff6db81e621ee884c",
-                "reference": "5ee3adf5441c2fe53b8ceacff6db81e621ee884c",
+                "url": "https://api.github.com/repos/fruux/sabre-event/zipball/f33d60742d7dff63d3722d0f70016704bf32e8db",
+                "reference": "f33d60742d7dff63d3722d0f70016704bf32e8db",
                 "shasum": ""
             },
             "require": {
@@ -1375,8 +1376,8 @@
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "Sabre\\Event": "lib/"
+                "psr-4": {
+                    "Sabre\\Event\\": "lib/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1386,31 +1387,35 @@
             "authors": [
                 {
                     "name": "Evert Pot",
-                    "email": "evert@rooftopsolutions.nl",
-                    "homepage": "http://www.rooftopsolutions.nl/",
+                    "email": "me@evertpot.com",
+                    "homepage": "http://evertpot.com/",
                     "role": "Developer"
                 }
             ],
-            "description": "The sabre/event library provides utilities for lightweight event-based programming",
-            "homepage": "http://sabre.io/event",
+            "description": "sabre/event is a library for lightweight event-based programming",
+            "homepage": "http://sabre.io/event/",
             "keywords": [
                 "EventEmitter",
-                "events"
+                "events",
+                "hooks",
+                "plugin",
+                "promise",
+                "signal"
             ],
-            "time": "2014-06-12 16:34:49"
+            "time": "2014-10-06 23:26:48"
         },
         {
             "name": "sabre/http",
-            "version": "2.0.4",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fruux/sabre-http.git",
-                "reference": "c4c24f547a5509c6c661b11ecf4ff524d2bf6a44"
+                "reference": "897fdb22c3b195615bd7e2c8aadd1a1354884981"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fruux/sabre-http/zipball/c4c24f547a5509c6c661b11ecf4ff524d2bf6a44",
-                "reference": "c4c24f547a5509c6c661b11ecf4ff524d2bf6a44",
+                "url": "https://api.github.com/repos/fruux/sabre-http/zipball/897fdb22c3b195615bd7e2c8aadd1a1354884981",
+                "reference": "897fdb22c3b195615bd7e2c8aadd1a1354884981",
                 "shasum": ""
             },
             "require": {
@@ -1427,8 +1432,8 @@
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "Sabre\\HTTP": "lib/"
+                "psr-4": {
+                    "Sabre\\HTTP\\": "lib/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1448,20 +1453,20 @@
             "keywords": [
                 "http"
             ],
-            "time": "2014-07-14 18:13:13"
+            "time": "2014-10-10 01:10:11"
         },
         {
             "name": "sabre/vobject",
-            "version": "3.3.3",
+            "version": "3.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fruux/sabre-vobject.git",
-                "reference": "de508f160e811c09b5e651909eb20b9e058a043c"
+                "reference": "e7cbc59a7a77325dfa32924865e1802c9216a3e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fruux/sabre-vobject/zipball/de508f160e811c09b5e651909eb20b9e058a043c",
-                "reference": "de508f160e811c09b5e651909eb20b9e058a043c",
+                "url": "https://api.github.com/repos/fruux/sabre-vobject/zipball/e7cbc59a7a77325dfa32924865e1802c9216a3e0",
+                "reference": "e7cbc59a7a77325dfa32924865e1802c9216a3e0",
                 "shasum": ""
             },
             "require": {
@@ -1514,21 +1519,21 @@
                 "jCard",
                 "vCard"
             ],
-            "time": "2014-10-09 15:59:25"
+            "time": "2014-11-19 22:15:24"
         },
         {
             "name": "sensio/distribution-bundle",
-            "version": "v3.0.8",
+            "version": "v3.0.9",
             "target-dir": "Sensio/Bundle/DistributionBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sensiolabs/SensioDistributionBundle.git",
-                "reference": "bc5e96bb4faf6bee7121085951d11b89488952f5"
+                "reference": "82d85b032db66163568ad988e630e5ad74138c72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/bc5e96bb4faf6bee7121085951d11b89488952f5",
-                "reference": "bc5e96bb4faf6bee7121085951d11b89488952f5",
+                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/82d85b032db66163568ad988e630e5ad74138c72",
+                "reference": "82d85b032db66163568ad988e630e5ad74138c72",
                 "shasum": ""
             },
             "require": {
@@ -1567,7 +1572,7 @@
                 "configuration",
                 "distribution"
             ],
-            "time": "2014-11-03 21:16:34"
+            "time": "2014-11-21 15:36:24"
         },
         {
             "name": "sensio/framework-extra-bundle",
@@ -1903,16 +1908,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v2.5.6",
+            "version": "v2.5.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "1a1b1e528935f15dd76169f8b1dc3ef97f0d6210"
+                "reference": "dd4254fc39a702af22cd886a6790769541469da1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/1a1b1e528935f15dd76169f8b1dc3ef97f0d6210",
-                "reference": "1a1b1e528935f15dd76169f8b1dc3ef97f0d6210",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/dd4254fc39a702af22cd886a6790769541469da1",
+                "reference": "dd4254fc39a702af22cd886a6790769541469da1",
                 "shasum": ""
             },
             "require": {
@@ -1973,7 +1978,7 @@
                 "ircmaxell/password-compat": "1.0.*",
                 "monolog/monolog": "~1.3",
                 "ocramius/proxy-manager": ">=0.3.1,<0.6-dev",
-                "propel/propel1": "1.6.*"
+                "propel/propel1": "~1.6"
             },
             "type": "library",
             "extra": {
@@ -2012,7 +2017,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2014-10-24 06:55:39"
+            "time": "2014-11-20 16:00:03"
         },
         {
             "name": "twig/extensions",

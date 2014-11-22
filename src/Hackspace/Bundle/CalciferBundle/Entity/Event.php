@@ -151,6 +151,12 @@ class Event extends BaseEntity
         $event->setSummary($this->summary);
         $event->setUrl($this->url);
         $event->setUid($this->id);
+        if (count($this->tags) > 0) {
+            $categories = [];
+            foreach($this->tags as $tag) {
+                $event->addCategory($tag->name);
+            }
+        }
         if ($this->location instanceof Location) {
             $location = new EventLocation();
             $location->setName($this->location->name);
