@@ -38,8 +38,6 @@ class GenerateEventsCommand extends ContainerAwareCommand
             $now = new \DateTime();
             $end = new \DateTime();
             $end->add($duration);
-            $output->writeln(sprintf("Generating Dates from %s to %s",$now->format('Y-m-d'),$end->format('Y-m-d')));
-            $output->writeln("Fetching repeating events");
             /** @var EntityManager $entityManager */
             $entityManager = $this->getContainer()->get('doctrine')->getManager();
             $repo = $entityManager->getRepository('CalciferBundle:RepeatingEvent');
