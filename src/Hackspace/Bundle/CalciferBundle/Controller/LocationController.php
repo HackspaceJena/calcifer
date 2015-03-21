@@ -143,8 +143,18 @@ class LocationController extends Controller
         }
 
         if ($location->name != $request->get('name')) {
-            $location->name = $request->get('name');
-            $location->slug = $location->generateSlug($location->name, $em);
+            // someone changed the name of the location, lets check if the location already exists
+            $new_location = $repo->findOneBy(['name' => $request->get('name')]);
+            if (is_null($new_location)) {
+                $location->name = $request->get('name');
+                $location->slug = $location->generateSlug($location->name, $em);
+            } else {
+                $request->getSession()->getFlashBag()->add(
+                    'error',
+                    'Ort mit diesem Namen existiert bereits.'
+                );
+                return $this->redirect($this->generateUrl('location_edit', array('slug' => $location->slug)));
+            }
         }
         $location->streetaddress = $request->get('streetaddress');
         $location->streetnumber = $request->get('streetnumber');

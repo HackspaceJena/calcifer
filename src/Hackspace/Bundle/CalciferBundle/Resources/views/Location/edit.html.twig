@@ -29,6 +29,17 @@
         <div class="ui column">
             <form method="post"
                   action="{{ path('location_update',{'slug':entity.slug}) }}">
+                {% set errors = app.session.flashbag.get('error') %}
+                {% if errors|length > 0 %}
+                <div class="ui error message">
+                    <div class="header">Bitte korrigiere folgende Fehler:</div>
+                    <ul class="list">
+                        {% for flashMessage in errors %}
+                        <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
                 <div class="ui form segment">
                     <div class="field">
                         <label class="" for="location-name">Name</label>
