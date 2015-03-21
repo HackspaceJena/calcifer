@@ -41,10 +41,13 @@ class GenerateEventsCommand extends ContainerAwareCommand
             /** @var EntityManager $entityManager */
             $entityManager = $this->getContainer()->get('doctrine')->getManager();
             $repo = $entityManager->getRepository('CalciferBundle:RepeatingEvent');
-            $entities = $repo->findAll();
+            $entities = $repo->findBy([],['id' => 'asc']);
             foreach($entities as $entity) {
                 /** @var RepeatingEvent $entity */
                 $next_date = is_null($entity->nextdate) ? new DateTime() : $entity->nextdate;
+                /** This is a fuggly hack. It would be best to store the named timezone also in the
+                 *  database to avoid problems with daylight savings.  */
+                $next_date->setTimezone(new \DateTimeZone('Europe/Berlin'));
                 $parser = new RelativeDateParser($entity->repeating_pattern,$next_date,'de');
                 $event = null;
                 while (($next_date = $parser->getNext()) < $end) {
