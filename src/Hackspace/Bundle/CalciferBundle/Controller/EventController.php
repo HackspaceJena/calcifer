@@ -351,7 +351,7 @@ class EventController extends Controller
 
         $tags = $request->get('tags');
         if (strlen($tags) > 0) {
-            $tags = explode(',', $tags);
+            $tags = explode(',', strtolower($tags));
             $em = $this->getDoctrine()->getManager();
             $repo = $em->getRepository('CalciferBundle:Tag');
             $entity->clearTags();
