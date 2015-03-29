@@ -15,51 +15,47 @@
 {% endblock %}
 
 {% block body -%}
-    <div class="ui one column page grid title">
-        <div class="ui column">
-            <h1 class="ui header">
-                Wiederholende Termine
-            </h1>
-        </div>
+    <div class="ui basic segment">
+        <h1 class="ui green dividing header">
+            Wiederholende Termine
+        </h1>
     </div>
 
-    <div class="ui one column page grid stackable">
-        <div class="column">
-            <table class="ui table">
-                <thead>
+    <div class="ui basic segment">
+        <table class="ui table">
+            <thead>
+            <tr>
+                <th>Zusammenfassung</th>
+                <th>Nächstes Datum</th>
+                <th>Wiederholungsmuster</th>
+                <th>Aktionen</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entity in entities %}
                 <tr>
-                    <th>Zusammenfassung</th>
-                    <th>Nächstes Datum</th>
-                    <th>Wiederholungsmuster</th>
-                    <th>Aktionen</th>
+                    <td>
+                        {{ entity.summary }}
+                    </td>
+                    <td>
+                        {{ entity.nextdate.format('Y-m-d H:i') }}
+                    </td>
+                    <td>
+                        {{ entity.repeating_pattern }}
+                    </td>
+                    <td>
+                        <a href="{{ path('repeating_event_edit', {'slug':entity.slug}) }}">Bearbeiten</a> |
+                        <a href="{{ path('repeating_event_delete', {'slug':entity.slug}) }}">Löschen</a>
+                    </td>
                 </tr>
-                </thead>
-                <tbody>
-                {% for entity in entities %}
-                    <tr>
-                        <td>
-                            {{ entity.summary }}
-                        </td>
-                        <td>
-                            {{ entity.nextdate.format('Y-m-d H:i') }}
-                        </td>
-                        <td>
-                            {{ entity.repeating_pattern }}
-                        </td>
-                        <td>
-                            <a href="{{ path('repeating_event_edit', {'slug':entity.slug}) }}">Bearbeiten</a> |
-                            <a href="{{ path('repeating_event_delete', {'slug':entity.slug}) }}">Löschen</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="4"><a href="{{ path('repeating_event_new') }}">Neuen wiederholenden Termin anlegen</a></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="4"><a class="ui green button" href="{{ path('repeating_event_new') }}">Neuen wiederholenden Termin anlegen</a></td>
+            </tr>
+            </tfoot>
+        </table>
 
     </div>
 

@@ -19,156 +19,150 @@
 {% endblock %}
 
 {% block body -%}
-    <div class="ui one column page grid">
-        <div class="ui column">
-            <h1>Ort bearbeiten</h1>
-        </div>
+    <div class="ui basic segment">
+        <h1 class="ui green dividing header">Ort bearbeiten</h1>
     </div>
 
-    <div class="ui one column page grid">
-        <div class="ui column">
-            <form method="post"
+    <div class="ui basic segment">
+        <div class="ui segment">
+            <form class="ui form"
+                  method="post"
                   action="{{ path('location_update',{'slug':entity.slug}) }}">
                 {% set errors = app.session.flashbag.get('error') %}
                 {% if errors|length > 0 %}
-                <div class="ui error message">
-                    <div class="header">Bitte korrigiere folgende Fehler:</div>
-                    <ul class="list">
-                        {% for flashMessage in errors %}
-                        <li>{{ flashMessage }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
+                    <div class="ui error message">
+                        <div class="header">Bitte korrigiere folgende Fehler:</div>
+                        <ul class="list">
+                            {% for flashMessage in errors %}
+                                <li>{{ flashMessage }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 {% endif %}
-                <div class="ui form segment">
-                    <div class="field">
-                        <label class="" for="location-name">Name</label>
+                <div class="required field">
+                    <label for="location-name">Name</label>
 
-                        <div class="ui left labeled input">
-                            <input type="text"
-                                   id="location-name"
-                                   name="name"
-                                   value="{{ entity.name|default('') }}"
-                                   required="required"
-                                   maxlength="255"
-                                   class="form-control">
-
-                            <div class="ui corner label">
-                                <i class="icon asterisk"></i>
-                            </div>
-                        </div>
+                    <div class="ui left labeled input">
+                        <input type="text"
+                               id="location-name"
+                               name="name"
+                               value="{{ entity.name|default('') }}"
+                               required="required"
+                               maxlength="255"
+                               class="form-control">
                     </div>
-
-                    <div class="field">
-                        <label class="control-label required" for="location-description">Beschreibung</label>
-
-                        <div class="ui left labeled icon input attached-label">
-                            <textarea id="location-description" name="description">{{ entity.description|default('') }}</textarea>
-
-                            <div class="ui bottom attached label">Du kannst hier <a
-                                        href="https://en.wikipedia.org/wiki/Markdown">Markdown</a> benutzen.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label class="" for="location-streetaddress">Straße</label>
-
-                        <div class="ui left labeled input">
-                            <input type="text"
-                                   id="location-streetaddress"
-                                   name="streetaddress"
-                                   value="{{ entity.streetaddress|default('') }}"
-                                   required="required"
-                                   maxlength="255"
-                                   class="form-control">
-
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label class="" for="location-streetnumber">Hausnummer</label>
-
-                        <div class="ui left labeled input">
-                            <input type="text"
-                                   id="location-streetnumber"
-                                   name="streetnumber"
-                                   value="{{ entity.streetnumber|default('') }}"
-                                   required="required"
-                                   maxlength="255"
-                                   class="form-control">
-
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label class="" for="location-zipcode">Postleitzahl</label>
-
-                        <div class="ui left labeled input">
-                            <input type="text"
-                                   id="location-zipcode"
-                                   name="zipcode"
-                                   value="{{ entity.zipcode|default('') }}"
-                                   required="required"
-                                   maxlength="255"
-                                   class="form-control">
-
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label class="" for="location-city">Ort</label>
-
-                        <div class="ui left labeled input">
-                            <input type="text"
-                                   id="location-city"
-                                   name="city"
-                                   value="{{ entity.city|default('') }}"
-                                   required="required"
-                                   maxlength="255"
-                                   class="form-control">
-
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label class="control-label required" for="location-geocords">Geokoordinaten</label>
-
-                        <div class="ui left labeled icon input attached-{% if entity.location.lat|default(0) > 0 %}geo-{% endif %}label">
-                            <input type="text"
-                                   id="location-geocords"
-                                   name="geocords"
-                                   maxlength="255"
-                                   value="{{ entity.lat|default('0') }},{{ entity.lon|default('0') }}"
-                                   class="form-control">
-                            <i class="icon map marker"></i>
-                            <div class="ui bottom attached label">
-                                Gebe entweder Breitengrad und Längengrad (Mit Punkten!) kommasepariert ein oder <a href="#" class="add_geo">wähle einen Punkt auf der Karte aus</a>.
-                            </div>
-                            <div class="ui modal geo chooser">
-                                <i class="close icon"></i>
-                                <div class="header">
-                                    Wähle einen Punkt auf der Karte
-                                </div>
-                                <div class="content">
-                                    <div id="map"></div>
-                                </div>
-                                <div class="actions">
-                                    <div class="ui button cancel">
-                                        Cancel
-                                    </div>
-                                    <div class="ui button ok">
-                                        Okay
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    <input type="submit" class="ui button blue" value="Speichern"/>
                 </div>
+
+                <div class="field">
+                    <label class="control-label required" for="location-description">Beschreibung</label>
+
+                    <div class="ui input">
+                        <textarea id="location-description"
+                                  name="description">{{ entity.description|default('') }}</textarea>
+                    </div>
+
+                    <div class="ui label">Du kannst hier <a
+                                href="https://en.wikipedia.org/wiki/Markdown">Markdown</a> benutzen.
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="location-streetaddress">Straße</label>
+
+                    <div class="ui input">
+                        <input type="text"
+                               id="location-streetaddress"
+                               name="streetaddress"
+                               value="{{ entity.streetaddress|default('') }}"
+                               maxlength="255"
+                               class="form-control">
+
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="location-streetnumber">Hausnummer</label>
+
+                    <div class="ui input">
+                        <input type="text"
+                               id="location-streetnumber"
+                               name="streetnumber"
+                               value="{{ entity.streetnumber|default('') }}"
+                               maxlength="255"
+                               class="form-control">
+
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="location-zipcode">Postleitzahl</label>
+
+                    <div class="ui input">
+                        <input type="text"
+                               id="location-zipcode"
+                               name="zipcode"
+                               value="{{ entity.zipcode|default('') }}"
+                               maxlength="255"
+                               class="form-control">
+
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="" for="location-city">Ort</label>
+
+                    <div class="ui left labeled input">
+                        <input type="text"
+                               id="location-city"
+                               name="city"
+                               value="{{ entity.city|default('') }}"
+                               required="required"
+                               maxlength="255"
+                               class="form-control">
+
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="control-label required" for="location-geocords">Geokoordinaten</label>
+
+                    <div class="ui icon input">
+                        <input type="text"
+                               id="location-geocords"
+                               name="geocords"
+                               maxlength="255"
+                               value="{{ entity.lat|default('0') }},{{ entity.lon|default('0') }}"
+                               class="form-control">
+                        <i class="icon map marker"></i>
+                    </div>
+
+                    <div class="ui label">
+                        Gebe entweder Breitengrad und Längengrad (Mit Punkten!) kommasepariert ein oder <a href="#"
+                                                                                                           class="add_geo">wähle
+                            einen Punkt auf der Karte aus</a>.
+                    </div>
+                    <div class="ui modal geo chooser">
+                        <i class="close icon"></i>
+
+                        <div class="header">
+                            Wähle einen Punkt auf der Karte
+                        </div>
+                        <div class="content">
+                            <div id="map"></div>
+                        </div>
+                        <div class="actions">
+                            <div class="ui button cancel">
+                                Cancel
+                            </div>
+                            <div class="ui button ok">
+                                Okay
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <input type="submit" class="ui button blue" value="Speichern"/>
 
             </form>
         </div>

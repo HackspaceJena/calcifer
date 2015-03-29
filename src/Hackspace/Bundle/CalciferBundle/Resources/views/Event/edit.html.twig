@@ -19,14 +19,12 @@
 {% endblock %}
 
 {% block body -%}
-    <div class="ui one column page grid">
-        <div class="ui column">
-            <h1>Termin bearbeiten</h1>
-        </div>
+    <div class="ui basic segment">
+        <h1 class="ui dividing green header">Termin bearbeiten</h1>
     </div>
 
-    <div class="ui one column page grid">
-        <div class="ui column">
+    <div class="ui basic segment">
+        <div class="ui segment">
             {{ include('CalciferBundle:Event:event_form.html.twig',{'entity':entity}) }}
         </div>
     </div>

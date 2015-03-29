@@ -4,8 +4,7 @@
     {% stylesheets filter="compass"
     "@CalciferBundle/Resources/assets/css/jquery.datetimepicker.scss"
     "@CalciferBundle/Resources/assets/css/events.scss"
-    "@CalciferBundle/Resources/assets/css/leaflet.scss"
-    %}
+    "@CalciferBundle/Resources/assets/css/leaflet.scss" %}
     <link rel="stylesheet" href="{{ asset_url }}"/>
     {% endstylesheets %}
 {% endblock %}
@@ -15,21 +14,18 @@
     "@CalciferBundle/Resources/assets/js/jquery.datetimepicker.js"
     "@CalciferBundle/Resources/assets/js/repeating_events.js"
     "@CalciferBundle/Resources/assets/js/events.js"
-    "@CalciferBundle/Resources/assets/js/leaflet.js"
-    %}
+    "@CalciferBundle/Resources/assets/js/leaflet.js" %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 {% endblock %}
 
 {% block body -%}
-    <div class="ui one column page grid">
-        <div class="ui column">
-            <h1>Wiederholenden Termin bearbeiten</h1>
-        </div>
+    <div class="ui basic segment">
+        <h1 class="ui green dividing header">Wiederholenden Termin bearbeiten</h1>
     </div>
 
-    <div class="ui one column page grid">
-        <div class="ui column">
+    <div class="ui basic segment">
+        <div class="ui segment">
             {{ include('CalciferBundle:RepeatingEvent:repeating_event_form.html.twig',{'entity':entity}) }}
         </div>
     </div>

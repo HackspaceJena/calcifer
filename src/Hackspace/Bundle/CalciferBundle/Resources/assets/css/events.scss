@@ -1,3 +1,18 @@
+.card {
+  h2 {
+    margin-bottom: 0.3em !important;
+    a {
+      color: inherit;
+    }
+  }
+  .meta {
+    .label,.button {
+      margin-bottom: 0.3em;
+      margin-top: 0.3em;
+    }
+  }
+}
+
 .event.box {
   h2 {
     padding: 0.5rem;

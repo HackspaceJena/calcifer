@@ -2,92 +2,98 @@
 
 {% block css %}
     {% stylesheets filter="compass"
-        "@CalciferBundle/Resources/assets/css/events.scss"
-    "@CalciferBundle/Resources/assets/css/leaflet.scss"
-    %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
+    "@CalciferBundle/Resources/assets/css/events.scss"
+    "@CalciferBundle/Resources/assets/css/leaflet.scss" %}
+    <link rel="stylesheet" href="{{ asset_url }}"/>
     {% endstylesheets %}
 {% endblock %}
 
 {% block javascripts %}
     {% javascripts
     "@CalciferBundle/Resources/assets/js/events.js"
-    "@CalciferBundle/Resources/assets/js/leaflet.js"
-    %}
+    "@CalciferBundle/Resources/assets/js/leaflet.js" %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 {% endblock %}
 
 {% block body -%}
-    <div class="ui one column page grid title">
-        <div class="ui column">
-            <h1>
-                Termine
-                {% if tags|default(false) %}
-                    {% if tags|length == 1 %}
-                        für Tag {{ tags[0].name }}
-                    {% elseif(tags|length == 2) %}
-                        für die Tags {{ tags[0].name }} {% if operator == 'or' %}oder{% else %}und{% endif %} {{ tags[1].name }}
-                    {% else %}
-                        für die Tags
-                        {% for tag in tags %}
-                            {% if not loop.last %}
-                                {{ tag.name }}{% if loop.index < (tags|length - 1) %},{% endif %}
-                            {% else %}
-                                {% if operator == 'or' %}oder{% else %}und{% endif %} {{ tag.name }}
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
+    <div class="ui basic segment">
+        <h1 class="ui green dividing header">
+            Termine
+            {% if tags|default(false) %}
+                {% if tags|length == 1 %}
+                    für Tag {{ tags[0].name }}
+                {% elseif(tags|length == 2) %}
+                    für die Tags {{ tags[0].name }} {% if operator == 'or' %}oder{% else %}und{% endif %} {{ tags[1].name }}
+                {% else %}
+                    für die Tags
+                    {% for tag in tags %}
+                        {% if not loop.last %}
+                            {{ tag.name }}{% if loop.index < (tags|length - 1) %},{% endif %}
+                        {% else %}
+                            {% if operator == 'or' %}oder{% else %}und{% endif %} {{ tag.name }}
+                        {% endif %}
+                    {% endfor %}
                 {% endif %}
-                {% if location|default(false) %} für Ort „{{ location.name }}“ <a class="location-edit" href="{{ path("location_edit",{slug:location.slug}) }}"><i class="ui icon edit inverted green circular link" data-content="Ort bearbeiten" title="Ort bearbeiten"></i> </a> {% endif %}
-            </h1>
-            {% if tag|default(false) %}
-                <a href="{{ path('tag_show',{'slug' : tag.slug }) }}.ics"><i class="icon calendar"></i>Link zur Kalenderdatei</a>
             {% endif %}
-            {% if location|default(false) %}
-                {% if (location.description|length > 0) or location.hasAddress() %}
-                    <div id="location-description" class="ui message green">
-                        {% if (location.description|length > 0) %}
-                            <p>{{ location.description|markdown }}</p>
-                        {% endif %}
-                        {% if (location.hasAddress()) %}
-                            <div class="ui section divider"></div>
-                            <p>
-                                Anschrift:<br/>
-                                {{ location.streetaddress }}{% if(location.streetnumber|length > 0) %} {{ location.streetnumber }}{% endif %}<br/>
+            {% if location|default(false) %} für Ort „{{ location.name }}“ <a class="location-edit"
+                                                                              href="{{ path("location_edit",{slug:location.slug}) }}"><i
+                        class="ui icon edit green link" data-content="Ort bearbeiten"
+                        title="Ort bearbeiten"></i> </a> {% endif %}
+        </h1>
+        {% if tag|default(false) %}
+            <a href="{{ path('tag_show',{'slug' : tag.slug }) }}.ics"><i class="icon calendar"></i>Link zur
+                Kalenderdatei</a>
+        {% endif %}
+        {% if location|default(false) %}
+            {% if (location.description|length > 0) or location.hasAddress() %}
+                <div id="location-description" class="ui message green">
+                    {% if (location.description|length > 0) %}
+                        <p>{{ location.description|markdown }}</p>
+                    {% endif %}
+                    {% if (location.hasAddress()) %}
+                        <div class="ui section divider"></div>
+                        <p>
+                            Anschrift:<br/>
+                            {{ location.streetaddress }}{% if(location.streetnumber|length > 0) %} {{ location.streetnumber }}{% endif %}
+                            <br/>
+                            {% if(location.zipcode|length > 0) %}{{ location.zipcode }} {% endif %}{{ location.city }}
+                        </p>
+                    {% endif %}
+                    {% if ((location.lon > 0) and (location.lat > 0)) %}
+                        <p><a href="" class="show_map">Auf einer OpenStreetMap-Karte anzeigen</a></p>
+                        <div class="ui modal geo viewer">
+                            <i class="close icon"></i>
+
+                            <div class="header">
+                                {{ location.name }}<br/>
+                                {{ location.streetaddress }}{% if(location.streetnumber|length > 0) %} {{ location.streetnumber }}{% endif %}
+                                <br/>
                                 {% if(location.zipcode|length > 0) %}{{ location.zipcode }} {% endif %}{{ location.city }}
-                            </p>
-                        {% endif %}
-                        {% if ((location.lon > 0) and (location.lat > 0)) %}
-                            <p><a href="" class="show_map">Auf einer OpenStreetMap-Karte anzeigen</a></p>
-                            <div class="ui modal geo viewer">
-                                <i class="close icon"></i>
-                                <div class="header">
-                                    {{ location.name }}<br/>
-                                    {{ location.streetaddress }}{% if(location.streetnumber|length > 0) %} {{ location.streetnumber }}{% endif %}<br/>
-                                    {% if(location.zipcode|length > 0) %}{{ location.zipcode }} {% endif %}{{ location.city }}
-                                </div>
-                                <div class="content">
-                                    <div id="view-map" data-lat="{{ location.lat }}" data-lon="{{ location.lon }}"></div>
-                                </div>
-                                <div class="actions">
-                                    <div class="ui button ok">
-                                        Schließen
-                                    </div>
+                            </div>
+                            <div class="content">
+                                <div id="view-map" data-lat="{{ location.lat }}"
+                                     data-lon="{{ location.lon }}"></div>
+                            </div>
+                            <div class="actions">
+                                <div class="ui button ok">
+                                    Schließen
                                 </div>
                             </div>
-                        {% endif %}
-                    </div>
-                {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
             {% endif %}
-        </div>
+        {% endif %}
     </div>
 
     {% if entities|length > 0 %}
-        <div class="ui three column page grid stackable">
-            {% for entity in entities %}
-                {{ include('CalciferBundle:Event:event_box.html.twig',{'truncate_summary':true}) }}
-            {% endfor %}
+        <div class="ui basic segment">
+            <div class="ui cards">
+                {% for entity in entities %}
+                        {{ include('CalciferBundle:Event:event_box.html.twig',{'truncate_summary':true}) }}
+                {% endfor %}
+            </div>
         </div>
     {% else %}
         <div class="ui one column page grid stackable">
