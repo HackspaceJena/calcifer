@@ -1,5 +1,7 @@
-<form class="ui form" method="post"
+<form class="ui form" method="post" id="event-form"
       action="{% if entity.id|default(0) > 0 %}{{ path('_update',{'slug':entity.slug}) }}{% else %}{{ path('_create') }}{% endif %}">
+    <div class="ui stackable grid">
+        <div class="eight wide column">
     <div class="required field{% if(errors|default('0') != 0) %} {% if('startdate' in errors|keys) %}error{% endif %}{% endif %}">
         <label for="event_startdate">Startdatum</label>
 
@@ -57,17 +59,6 @@
             {% if(errors|default('0') != 0) %} {% if('summary' in errors|keys) %}
                 <div class="ui red pointing above ui label">{{ errors.summary }}</div>
             {% endif %}{% endif %}
-        </div>
-    </div>
-
-    <div class="required field">
-        <label for="event_summary">Beschreibung</label>
-
-        <div class="ui input">
-            <textarea name="description">{{ entity.description|default('') }}</textarea>
-        </div>
-        <div class="ui label">Du kannst hier <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a>
-            benutzen.
         </div>
     </div>
 
@@ -141,6 +132,20 @@
         </div>
         <div class="ui label">Du kannst hier kommasepariert <a
                     href="https://en.wikipedia.org/wiki/Tag_%28metadata%29">Tags</a> angeben.
+        </div>
+    </div>
+        </div>
+        <div class="eight wide column">
+            <div class="required field">
+                <label for="event_summary">Beschreibung</label>
+
+                <div class="ui input">
+                    <textarea name="description" rows="30">{{ entity.description|default('') }}</textarea>
+                </div>
+                <div class="ui label">Du kannst hier <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a>
+                    benutzen.
+                </div>
+            </div>
         </div>
     </div>
 

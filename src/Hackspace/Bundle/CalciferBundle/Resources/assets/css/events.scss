@@ -13,56 +13,15 @@
   }
 }
 
-.event.box {
-  h2 {
-    padding: 0.5rem;
-    a,a:hover,a:visited {
-      color: #ffffff;
-    }
-  }
-
-  .startdate,.location,.url,.action {
-    display: inline;
-    margin: 0;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  a i.icon {
-    text-decoration: none;
-  }
-
-  ul.tags {
-    padding-left: 0;
-    margin: 0;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-    display: inline;
-    li {
-      list-style-type: none;
-      display: inline;
-      margin-right: 0.5rem;
-    }
-  }
-}
-
-form .ui.form {
-  .field {
-    .attached-label > input, .attached-label > textarea {
-      margin-bottom: 2rem;
-    }
-    .attached-geo-label > input, .attached-geo-label > textarea {
-      margin-bottom: 3.2rem;
-    }
+#event-form {
+  textarea {
+    height: auto;
+    max-height: none;
   }
 }
 
 #view-map, #map {
   height: 20rem;
-}
-
-.location-edit {
-  text-decoration: none;
 }
 
 #location-description {
