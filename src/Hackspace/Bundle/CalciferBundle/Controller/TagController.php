@@ -26,6 +26,7 @@ use Jsvrcek\ICS\CalendarStream;
 use Jsvrcek\ICS\CalendarExport;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
+use Symfony\Component\HttpFoundation\AcceptHeader;
 
 /**
  * Tag controller.
@@ -168,6 +169,46 @@ EOF;
                 'tags' => $tags,
                 'operator' => $operator,
             );
+        }
+    }
+
+    /**
+     * Finds and displays a Event entity.
+     *
+     * @Route("/")
+     * @Method("GET")
+     */
+    public function indexAction() {
+        $accepts = AcceptHeader::fromString($this->getRequest()->headers->get('Accept'));
+        if ($accepts->has('application/json')) {
+            $em = $this->getDoctrine()->getManager();
+
+            /** @var QueryBuilder $qb */
+            $qb = $em->createQueryBuilder();
+            $qb->select(['t'])
+                ->from('CalciferBundle:Tag', 't')
+                ->where('t.name LIKE :tag')
+                ->orderBy('t.name')
+                ->setParameter('tag', sprintf('%%%s%%',strtolower($this->getRequest()->query->get('q'))));
+
+            $entities = $qb->getQuery()->execute();
+
+            $tags = [];
+            foreach($entities as $tag) {
+                /** @var Tag $tag */
+                $tags[] = [
+                    'id' => $tag->id,
+                    'name' => $tag->name,
+                ];
+            }
+
+
+            $response = new Response(json_encode($tags));
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        } else {
+            return $this->redirect('/');
         }
     }
 }

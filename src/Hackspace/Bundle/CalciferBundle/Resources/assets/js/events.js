@@ -110,6 +110,38 @@ $(document).ready(function() {
         calcBoxSize(4);
     }
 
+    $('#event_tags').selectize({
+	    create: true,
+        diacritics: true,
+        valueField: 'name',
+        labelField: 'name',
+        searchField: 'name',
+	    render: {
+    	    item: function(data,escape){
+        		console.log([data,escape]);
+        		return '<div class="ui green compact small label"><i class="tag icon"></i>' + escape(data.name) + '</div>';
+    	    }
+    	},
+        load: function(query, callback) {
+            if (!query.length) return callback();
+            $.ajax({
+                url: "/tags/",
+                type: "GET",
+                dataType: 'json',
+                data: {
+                    q: query
+                },
+                error: function() {
+                  callback();
+                },
+                success: function(res) {
+                    console.log(res);
+                    callback(res);
+                }
+            });
+        }
+    });
+
     if (view_map_selector.length == 1) {
         jQuery('.show_map').click(addGeoCoordinates);
         map = L.map('view-map');
