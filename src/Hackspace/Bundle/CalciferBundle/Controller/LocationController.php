@@ -20,6 +20,7 @@ use Jsvrcek\ICS\Model\Calendar;
 use Jsvrcek\ICS\Utility\Formatter;
 use Jsvrcek\ICS\CalendarStream;
 use Jsvrcek\ICS\CalendarExport;
+use Symfony\Component\HttpFoundation\AcceptHeader;
 
 /**
  * Location controller.
@@ -173,5 +174,52 @@ class LocationController extends Controller
         $em->flush();
 
         return $this->redirect($this->generateUrl('location_show', array('slug' => $location->slug)));
+    }
+
+    /**
+     * Finds and displays a Event entity.
+     *
+     * @Route("/")
+     * @Method("GET")
+     */
+    public function indexAction() {
+        $accepts = AcceptHeader::fromString($this->getRequest()->headers->get('Accept'));
+        if ($accepts->has('application/json')) {
+            $em = $this->getDoctrine()->getManager();
+
+            /** @var QueryBuilder $qb */
+            $qb = $em->createQueryBuilder();
+            $qb->select(['l'])
+                ->from('CalciferBundle:Location', 'l')
+                ->where('lower(l.name) LIKE lower(:location)')
+                ->orderBy('l.name')
+                ->setParameter('location', sprintf('%%%s%%',$this->getRequest()->query->get('q')));
+
+            $entities = $qb->getQuery()->execute();
+
+            $locations = [];
+            foreach($entities as $location) {
+                /** @var Location $location */
+                $locations[] = array(
+                    'id' => $location->id,
+                    'name' => $location->name,
+                    'description' => \Michelf\Markdown::defaultTransform($location->description),
+                    'streetaddress' => $location->streetaddress,
+                    'streetnumber' => $location->streetnumber,
+                    'zipcode' => $location->zipcode,
+                    'city' => $location->city,
+                    'lon' => $location->lon,
+                    'lat' => $location->lat,
+                );
+            }
+
+
+            $response = new Response(json_encode($locations));
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        } else {
+            return $this->redirect('/');
+        }
     }
 }

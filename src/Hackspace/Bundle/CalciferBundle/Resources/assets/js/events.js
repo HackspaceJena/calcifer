@@ -142,6 +142,53 @@ $(document).ready(function() {
         }
     });
 
+    $('#event_location').selectize({
+        create: true,
+        diacritics: true,
+        valueField: 'name',
+        labelField: 'name',
+        searchField: 'name',
+        maxItems: 1,
+        render: {
+            item: function(data,escape){
+                console.log([data,escape]);
+                return '<div class="ui green compact small label"><i class="map marker icon"></i>' + escape(data.name) + '</div>';
+            },
+            option: function(item, escape) {
+                return '<div class="ui fluid green card">' +
+                    '<div class="content">'+
+                        '<div class="header">' +
+                            '<i class="ui icon map marker"></i>' + escape(item.name) +
+                        '</div>' +
+                        '<div class="meta">'+
+                        (item.lon && item.lat ? 'lon: '+ escape(item.lon)+' lat: ' + escape(item.lat) : '')+
+                (item.streetaddress ? ' Anschrift: ' + item.streetaddress + ' ' + item.streetnumber + ' ' + item.zipcode + ' ' + item.city : '')+
+                        '</div>'+
+                        (item.description ? '<div class="description">' + item.description + '</div>' : '') +
+                    '</div>'+
+                '</div>';
+            }
+        },
+        load: function(query, callback) {
+            if (!query.length) return callback();
+            $.ajax({
+                url: "/orte/",
+                type: "GET",
+                dataType: 'json',
+                data: {
+                    q: query
+                },
+                error: function() {
+                    callback();
+                },
+                success: function(res) {
+                    console.log(res);
+                    callback(res);
+                }
+            });
+        }
+    });
+
     if (view_map_selector.length == 1) {
         jQuery('.show_map').click(addGeoCoordinates);
         map = L.map('view-map');
