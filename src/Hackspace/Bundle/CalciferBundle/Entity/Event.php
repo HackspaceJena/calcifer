@@ -169,7 +169,7 @@ class Event extends BaseEntity
                 $event->setGeo($geo);
             }
         }
-        $event->setDescription(str_replace("\r","",str_replace("\n",'\n',$this->description)));
+        $event->setDescription(Markdown::defaultTransform($this->description));
         return $event;
     }
 }
