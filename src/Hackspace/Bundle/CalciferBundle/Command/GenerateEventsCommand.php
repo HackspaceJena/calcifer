@@ -57,7 +57,7 @@ class GenerateEventsCommand extends ContainerAwareCommand
                     $event->location = $entity->location;
                     $event->startdate = $next_date;
                     if ($entity->duration > 0) {
-                        $duration = new \DateInterval("PT".$entity->duration.'H');
+                        $duration = new \DateInterval("PT".$entity->duration.'M');
                         /** @var \DateTime $enddate */
                         $enddate = clone $next_date;
                         $enddate->add($duration);
