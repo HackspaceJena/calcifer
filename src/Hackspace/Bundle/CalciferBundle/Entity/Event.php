@@ -16,6 +16,7 @@ use Jsvrcek\ICS\Utility\Formatter;
 use Jsvrcek\ICS\CalendarStream;
 use Jsvrcek\ICS\CalendarExport;
 use Jsvrcek\ICS\Model\Description\Geo;
+use Michelf\Markdown;
 
 /**
  * Event
