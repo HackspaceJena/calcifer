@@ -16,7 +16,6 @@ use Jsvrcek\ICS\Utility\Formatter;
 use Jsvrcek\ICS\CalendarStream;
 use Jsvrcek\ICS\CalendarExport;
 use Jsvrcek\ICS\Model\Description\Geo;
-use Michelf\Markdown;
 
 /**
  * Event
@@ -170,7 +169,7 @@ class Event extends BaseEntity
                 $event->setGeo($geo);
             }
         }
-        $event->setDescription(Markdown::defaultTransform($this->description));
+        $event->setDescription($this->description);
         return $event;
     }
 }
