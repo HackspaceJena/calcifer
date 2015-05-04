@@ -37,7 +37,7 @@
         "doctrine/migrations": "dev-master",
         "doctrine/doctrine-migrations-bundle": "dev-master",
         "jbroadway/urlify" : "~1.0",
-        "enko/relativedateparser" : "v0.3",
+        "enko/relativedateparser" : "v0.4",
         "sabre/dav" : "~2.0"
     },
     "require-dev": {
