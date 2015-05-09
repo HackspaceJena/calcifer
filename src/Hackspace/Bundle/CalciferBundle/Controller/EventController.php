@@ -181,9 +181,27 @@ class EventController extends Controller
      * @Method("GET")
      * @Template("CalciferBundle:Event:edit.html.twig")
      */
-    public function newAction()
+    public function newAction(Request $request)
     {
         $entity = new Event();
+
+        $entity->description = $request->get('description');
+        $entity->summary = $request->get('summary');
+        $entity->url = $request->get('url');
+        if (strlen($request->get('tags')) > 0) {
+            $tags = explode(",",$request->get('tags'));
+            foreach($tags as $tag) {
+                $_tag = new Tag();
+                $_tag->name = $tag;
+                $entity->tags[] = $_tag;
+            }
+        }
+
+        if (strlen($request->get('location')) > 0) {
+            $location = new Location();
+            $location->name = $request->get('location');
+            $entity->location = $location;
+        }
 
         return array(
             'entity' => $entity,
