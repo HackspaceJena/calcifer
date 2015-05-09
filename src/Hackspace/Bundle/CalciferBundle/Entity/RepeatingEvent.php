@@ -4,6 +4,7 @@ namespace Hackspace\Bundle\CalciferBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
+use enko\RelativeDateParser\RelativeDateParser;
 
 /**
  * RepeatEvent
@@ -84,4 +85,25 @@ class RepeatingEvent extends BaseEntity
      *      )
      */
     protected $tags = [];
+
+    public function isValid() {
+        $errors = [];
+        if ((is_null($this->nextdate)) && (strlen($this->nextdate) > 0)) {
+            $errors['nextdate'] = "Bitte gebe einen nächsten Termin an.";
+        }
+        if ((is_null($this->repeating_pattern)) && (strlen($this->repeating_pattern) > 0)) {
+            $errors['repeating_pattern'] = "Bitte gebe ein gültiges Wiederholungsmuster an.";
+        } else {
+            $this->nextdate->setTimezone(new \DateTimeZone('Europe/Berlin'));
+            try {
+                $parser = new RelativeDateParser($this->repeating_pattern,$this->nextdate,'de');
+            } catch (\Exception $e) {
+                $errors['repeating_pattern'] = "Bitte gebe ein gültiges Wiederholungsmuster an.";
+            }
+        }
+        if ((is_null($this->summary)) && (strlen($this->summary) > 0)) {
+            $errors['summary'] = "Bitte gebe eine Zusammenfassung an.";
+        }
+        return $errors;
+    }
 }

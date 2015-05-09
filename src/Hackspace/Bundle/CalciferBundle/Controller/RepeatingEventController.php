@@ -75,7 +75,8 @@ class RepeatingEventController extends Controller
     {
         $entity = new RepeatingEvent();
         $this->fillEntity($request, $entity);
-        if ($this->validateRepeatingEvent($entity)) {
+        $errors = $entity->isValid();
+        if (count($errors) == 0) {
             $ret = $this->saveRepeatingEvent($request, $entity);
             if ($entity->id > 0) {
                 return $this->redirect($this->generateUrl('repeating_event_show'));
@@ -85,6 +86,7 @@ class RepeatingEventController extends Controller
         }
         return [
             'entity' => $entity,
+            'errors' => $errors,
         ];
 
     }
@@ -139,7 +141,8 @@ class RepeatingEventController extends Controller
         }
 
         $this->fillEntity($request, $entity);
-        if ($this->validateRepeatingEvent($entity)) {
+        $errors = $entity->isValid();
+        if (count($errors) == 0) {
             $ret = $this->saveRepeatingEvent($request, $entity);
             if ($entity->id > 0) {
                 return $this->redirect($this->generateUrl('repeating_event_show'));
@@ -149,6 +152,7 @@ class RepeatingEventController extends Controller
         }
         return [
             'entity' => $entity,
+            'errors' => $errors,
         ];
     }
 
@@ -170,20 +174,6 @@ class RepeatingEventController extends Controller
         $nextdate = new \DateTime($nextdate);
         $entity->nextdate = $nextdate;
 
-    }
-
-    private function validateRepeatingEvent(RepeatingEvent $entity)
-    {
-        $fields = [
-            'nextdate',
-            'repeating_pattern',
-            'summary',
-        ];
-        foreach ($fields as $field) {
-            if ((is_null($entity->$field)) && (strlen($entity->$field) > 0))
-                return false;
-        }
-        return true;
     }
 
     private function saveRepeatingEvent(Request $request, RepeatingEvent $entity)
