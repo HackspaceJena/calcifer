@@ -156,16 +156,17 @@ class EventController extends Controller
     {
         $entity = new Event();
 
-        $em = $this->saveEvent($request, $entity);
-
-
-        $errors = $entity->isValid();
-        if ($errors === true) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('_show', array('slug' => $entity->slug)));
+        if (! $request->get('origin')) {
+            $em = $this->saveEvent($request, $entity);
+            $errors = $entity->isValid();
+            if ( $errors === true ) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($entity);
+                $em->flush();
+                return $this->redirect($this->generateUrl('_show', array('slug' => $entity->slug)));
+            }
+        } else {
+            return $this->redirect($this->generateUrl(''));
         }
 
         return array(
@@ -284,16 +285,18 @@ class EventController extends Controller
             throw $this->createNotFoundException('Unable to find Event entity.');
         }
 
-        $em = $this->saveEvent($request, $entity);
 
 
         $errors = $entity->isValid();
-        if ($errors === true) {
+        if ($errors === true && (! $request->get('origin'))) {
+            $em = $this->saveEvent($request, $entity);
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
             return $this->redirect($this->generateUrl('_show', array('slug' => $entity->slug)));
+        } else {
+            return $this->redirect($this->generateUrl(''));
         }
 
         return array(
