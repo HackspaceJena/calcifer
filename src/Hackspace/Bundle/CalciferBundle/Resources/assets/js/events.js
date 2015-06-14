@@ -22,7 +22,7 @@ jQuery(document).ready(function () {
         map = L.map('map');
 
         // add an OpenStreetMap tile layer
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
@@ -49,7 +49,6 @@ jQuery(document).ready(function () {
                 if (!(jQuery('input[name=location_lat]').val() == undefined)) {
                     jQuery('input[name=location_lat]').val(coords.lat);
                     jQuery('input[name=location_lon]').val(coords.lng);
-                    jQuery('input[name=location]').css('margin-bottom', '3.2rem');
                     jQuery('span.coords').text('Folgende Koordinaten sind angegeben: lat:' + coords.lat + ', lon:' + coords.lng);
                 } else {
                     jQuery('input[name=geocords]').val(coords.lat + ',' + coords.lng);
@@ -83,9 +82,114 @@ jQuery(document).ready(function () {
     }
 });
 
-$(document).ready(function() {
+function calcBoxSize(columns) {
+    var card_selector = jQuery('.ui.cards .card');
+    var screen_width = $(window).width() - 14 - 14; /* padding of basic segment */
+    // first check if we can display 4 cards on the screen with a minimum width of 399px
+    var box_width = Math.floor((screen_width / columns)) - 10;
+    if ((box_width >= 395) || (columns == 1)) {
+        card_selector.css('width',box_width);
+    } else {
+        calcBoxSize(columns - 1);
+    }
+}
 
-    if (jQuery('#view-map').length == 1) {
+$(window).resize(function(){
+    var card_selector = jQuery('.ui.cards .card');
+
+    if (card_selector.length > 0) {
+        calcBoxSize(4);
+    }
+});
+
+$(document).ready(function() {
+    var view_map_selector = jQuery('#view-map');
+    var card_selector = jQuery('.ui.cards .card');
+
+    if (card_selector.length > 0) {
+        calcBoxSize(4);
+    }
+
+    $('#event_tags').selectize({
+	    create: true,
+        diacritics: true,
+        valueField: 'name',
+        labelField: 'name',
+        searchField: 'name',
+	    render: {
+    	    item: function(data,escape){
+        		console.log([data,escape]);
+        		return '<div class="ui green compact small label"><i class="tag icon"></i>' + escape(data.name) + '</div>';
+    	    }
+    	},
+        load: function(query, callback) {
+            if (!query.length) return callback();
+            $.ajax({
+                url: "/tags/",
+                type: "GET",
+                dataType: 'json',
+                data: {
+                    q: query
+                },
+                error: function() {
+                  callback();
+                },
+                success: function(res) {
+                    console.log(res);
+                    callback(res);
+                }
+            });
+        }
+    });
+
+    $('#event_location').selectize({
+        create: true,
+        diacritics: true,
+        valueField: 'name',
+        labelField: 'name',
+        searchField: 'name',
+        maxItems: 1,
+        render: {
+            item: function(data,escape){
+                console.log([data,escape]);
+                return '<div class="ui green compact small label"><i class="map marker icon"></i>' + escape(data.name) + '</div>';
+            },
+            option: function(item, escape) {
+                return '<div class="ui fluid green card">' +
+                    '<div class="content">'+
+                        '<div class="header">' +
+                            '<i class="ui icon map marker"></i>' + escape(item.name) +
+                        '</div>' +
+                        '<div class="meta">'+
+                        (item.lon && item.lat ? 'lon: '+ escape(item.lon)+' lat: ' + escape(item.lat) : '')+
+                (item.streetaddress ? ' Anschrift: ' + item.streetaddress + ' ' + item.streetnumber + ' ' + item.zipcode + ' ' + item.city : '')+
+                        '</div>'+
+                        (item.description ? '<div class="description">' + item.description + '</div>' : '') +
+                    '</div>'+
+                '</div>';
+            }
+        },
+        load: function(query, callback) {
+            if (!query.length) return callback();
+            $.ajax({
+                url: "/orte/",
+                type: "GET",
+                dataType: 'json',
+                data: {
+                    q: query
+                },
+                error: function() {
+                    callback();
+                },
+                success: function(res) {
+                    console.log(res);
+                    callback(res);
+                }
+            });
+        }
+    });
+
+    if (view_map_selector.length == 1) {
         jQuery('.show_map').click(addGeoCoordinates);
         map = L.map('view-map');
 
@@ -108,8 +212,8 @@ $(document).ready(function() {
             },
             onVisible: function () {
                 map.invalidateSize(true);
-                var lat = $('#view-map').data('lat');
-                var lon = $('#view-map').data('lon');
+                var lat = view_map_selector.data('lat');
+                var lon = view_map_selector.data('lon');
                 if ((lat > 0) && (lon > 0)) {
                     map.setView([lat, lon], 16);
                     var latlng = new L.LatLng(lat, lon);

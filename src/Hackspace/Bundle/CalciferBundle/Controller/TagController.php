@@ -25,6 +25,8 @@ use Jsvrcek\ICS\Utility\Formatter;
 use Jsvrcek\ICS\CalendarStream;
 use Jsvrcek\ICS\CalendarExport;
 use Symfony\Component\Validator\Constraints\DateTime;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
+use Symfony\Component\HttpFoundation\AcceptHeader;
 
 /**
  * Tag controller.
@@ -47,26 +49,98 @@ class TagController extends Controller
 
         /** @var EntityRepository $repo */
         $repo = $em->getRepository('CalciferBundle:Tag');
+        $tags = [];
+        $operator = 'or';
+        if (strpos($slug, '|') !== false) {
+            $slugs = explode('|', $slug);
+            foreach ($slugs as $item) {
+                /** @var Tag $tag */
+                $tag = $repo->findOneBy(['slug' => $item]);
 
-        /** @var Tag $location */
-        $tag = $repo->findOneBy(['slug' => $slug]);
+                if ($tag instanceof Tag) {
+                    $tags[] = $tag;
+                }
+            }
+        } else if (strpos($slug, '&') !== false) {
+            $slugs = explode('&', $slug);
+            $operator = 'and';
+            foreach ($slugs as $item) {
+                /** @var Tag $tag */
+                $tag = $repo->findOneBy(['slug' => $item]);
 
-        if (!$tag) {
+                if ($tag instanceof Tag) {
+                    $tags[] = $tag;
+                }
+            }
+        } else {
+            /** @var Tag $tag */
+            $tag = $repo->findOneBy(['slug' => $slug]);
+
+            if ($tag instanceof Tag) {
+                $tags[] = $tag;
+            }
+        }
+
+        if (count($tags) == 0) {
             throw $this->createNotFoundException('Unable to find tag entity.');
         }
 
         $now = new \DateTime();
         $now->setTime(0, 0, 0);
 
-        /** @var QueryBuilder $qb */
-        $qb = $em->createQueryBuilder();
-        $qb->select(array('e'))
-            ->from('CalciferBundle:Event', 'e')
-            ->join('e.tags', 't', 'WITH', $qb->expr()->in('t.id', $tag->id))
-            ->where('e.startdate >= :startdate')
-            ->orderBy('e.startdate')
-            ->setParameter('startdate', $now);
-        $entities = $qb->getQuery()->execute();
+        $entities = null;
+        if ($operator == 'and') {
+            $sql = <<<EOF
+SELECT * FROM events AS e
+WHERE id IN (
+WITH events_on_tags AS (
+  SELECT events_id, array_agg(tags_id) as tags
+  FROM events2tags
+  GROUP BY events_id
+)
+SELECT events_id FROM events_on_tags
+WHERE tags @> array[@tags@]
+)
+AND e.startdate >= :startdate
+ORDER BY e.startdate
+EOF;
+            $tag_ids = array_reduce($tags, function ($carry, $item) {
+                if (strlen($carry) == 0) {
+                    return $item->id;
+                } else {
+                    return $carry . ',' . $item->id;
+                }
+            });
+
+            $sql = str_replace('@tags@', $tag_ids, $sql);
+
+            $rsm = new ResultSetMappingBuilder($em);
+            $rsm->addRootEntityFromClassMetadata('CalciferBundle:Event', 'e');
+
+            $query = $em->createNativeQuery($sql, $rsm);
+
+            $query->setParameter('startdate', $now);
+
+            $entities = $query->getResult();
+
+        } else {
+            /** @var QueryBuilder $qb */
+            $qb = $em->createQueryBuilder();
+            $qb->select(array('e'))
+                ->from('CalciferBundle:Event', 'e')
+                ->where('e.startdate >= :startdate')
+                ->orderBy('e.startdate')
+                ->setParameter('startdate', $now);
+
+            $qb->join('e.tags', 't', 'WITH', $qb->expr()->in('t.id', array_reduce($tags, function ($carry, $item) {
+                if (strlen($carry) == 0) {
+                    return $item->id;
+                } else {
+                    return $carry . ',' . $item->id;
+                }
+            })));
+            $entities = $qb->getQuery()->execute();
+        }
 
         if ($format == 'ics') {
             $calendar = new Calendar();
@@ -75,25 +149,7 @@ class TagController extends Controller
 
             foreach ($entities as $entity) {
                 /** @var Event $entity */
-                $event = new CalendarEvent();
-                $event->setStart($entity->startdate);
-                if ($entity->enddate instanceof \DateTime)
-                    $event->setEnd($entity->enddate);
-                $event->setSummary($entity->summary);
-                $event->setDescription($entity->description);
-                $event->setUrl($entity->url);
-                $event->setUid($entity->slug);
-                if ($entity->location instanceof Location) {
-                    $location = new \Jsvrcek\ICS\Model\Description\Location();
-                    $location->setName($entity->location->name);
-                    $event->setLocations([$location]);
-                    if (\is_float($entity->location->lon) && \is_float($entity->location->lat)) {
-                        $geo = new Geo();
-                        $geo->setLatitude($entity->location->lat);
-                        $geo->setLongitude($entity->location->lon);
-                        $event->setGeo($geo);
-                    }
-                }
+                $event = $entity->ConvertToCalendarEvent();
                 $calendar->addEvent($event);
             }
 
@@ -110,8 +166,49 @@ class TagController extends Controller
         } else {
             return array(
                 'entities' => $entities,
-                'tag' => $tag,
+                'tags' => $tags,
+                'operator' => $operator,
             );
+        }
+    }
+
+    /**
+     * Finds and displays a Event entity.
+     *
+     * @Route("/")
+     * @Method("GET")
+     */
+    public function indexAction() {
+        $accepts = AcceptHeader::fromString($this->getRequest()->headers->get('Accept'));
+        if ($accepts->has('application/json')) {
+            $em = $this->getDoctrine()->getManager();
+
+            /** @var QueryBuilder $qb */
+            $qb = $em->createQueryBuilder();
+            $qb->select(['t'])
+                ->from('CalciferBundle:Tag', 't')
+                ->where('t.name LIKE :tag')
+                ->orderBy('t.name')
+                ->setParameter('tag', sprintf('%%%s%%',strtolower($this->getRequest()->query->get('q'))));
+
+            $entities = $qb->getQuery()->execute();
+
+            $tags = [];
+            foreach($entities as $tag) {
+                /** @var Tag $tag */
+                $tags[] = [
+                    'id' => $tag->id,
+                    'name' => $tag->name,
+                ];
+            }
+
+
+            $response = new Response(json_encode($tags));
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        } else {
+            return $this->redirect('/');
         }
     }
 }

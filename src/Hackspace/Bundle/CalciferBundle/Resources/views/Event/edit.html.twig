@@ -4,29 +4,31 @@
     {% stylesheets filter="compass"
     "@CalciferBundle/Resources/assets/css/jquery.datetimepicker.scss"
     "@CalciferBundle/Resources/assets/css/events.scss"
-    "@CalciferBundle/Resources/assets/css/leaflet.scss" %}
+    "@CalciferBundle/Resources/assets/css/leaflet.scss"
+    %}
     <link rel="stylesheet" href="{{ asset_url }}"/>
     {% endstylesheets %}
+    <link rel="stylesheet" href="/vendor/selectize.js/dist/css/selectize.css"/>
 {% endblock %}
 
 {% block javascripts %}
     {% javascripts
     "@CalciferBundle/Resources/assets/js/jquery.datetimepicker.js"
     "@CalciferBundle/Resources/assets/js/events.js"
-    "@CalciferBundle/Resources/assets/js/leaflet.js" %}
-    <script src="{{ asset_url }}"></script>
+    "@CalciferBundle/Resources/assets/js/leaflet.js"
+    %}
+    <script src="{{ asset_url }}"></script>    
     {% endjavascripts %}
+    <script src="/vendor/selectize.js/dist/js/standalone/selectize.js"></script>
 {% endblock %}
 
 {% block body -%}
-    <div class="ui one column page grid">
-        <div class="ui column">
-            <h1>Termin bearbeiten</h1>
-        </div>
+    <div class="ui basic segment">
+        <h1 class="ui green block dividing header">Termin bearbeiten</h1>
     </div>
 
-    <div class="ui one column page grid">
-        <div class="ui column">
+    <div class="ui basic segment">
+        <div class="ui segment">
             {{ include('CalciferBundle:Event:event_form.html.twig',{'entity':entity}) }}
         </div>
     </div>

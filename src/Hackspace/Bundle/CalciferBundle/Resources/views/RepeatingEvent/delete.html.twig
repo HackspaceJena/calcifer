@@ -15,15 +15,13 @@
 {% endblock %}
 
 {% block body -%}
-    <div class="ui one column page grid">
-        <div class="ui column">
-            <div class="ui segment event box">
-                <form class="ui form" method="post">
-                    <p>Möchtest du den wiederholenden Termin <strong>„{{ entity.summary }}“</strong> wirklich löschen?</p>
-                    <button name="confirmation" value="true" class="ui button red">Ja</button>
-                    <a href="{{ path('_show', {'slug' : entity.slug }) }}" class="ui button green">Nein</a>
-                </form>
-            </div>
+    <div class="ui basic segment">
+        <div class="ui segment">
+            <form class="ui form" method="post">
+                <p>Möchtest du den wiederholenden Termin <strong>„{{ entity.summary }}“</strong> wirklich löschen?</p>
+                <button name="confirmation" value="true" class="ui button red">Ja</button>
+                <a href="{{ path('_show', {'slug' : entity.slug }) }}" class="ui button green">Nein</a>
+            </form>
         </div>
     </div>
 {% endblock %}

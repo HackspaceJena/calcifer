@@ -1,1 +1,64 @@
-Hello {{ name }}!
+{% extends 'CalciferBundle::layout.html.twig' %}
+
+{% block body -%}
+    <div class="ui basic segment">
+        <h1 class="ui green block dividing header">
+            Über Calcifer
+        </h1>
+    </div>
+    <div class="ui basic segment">
+        <div class="ui segment">
+            <div class="ui stackable grid">
+                <div class="three wide column">
+                    <div class="ui fluid card">
+                        <div class="image">
+                            {% image '@CalciferBundle/Resources/assets/images/logo.png' %}
+                            <img
+                                    title="Eine Zeichnung von Calcifer. Gezeichnet von simply-Sylvan (http://simply-sylvan.deviantart.com/art/Calcifer-Purple-176746086)"
+                                    alt="Eine Zeichnung von Calcifer. Gezeichnet von simply-Sylvan (http://simply-sylvan.deviantart.com/art/Calcifer-Purple-176746086)"
+                                    src="{{ asset_url }}"
+                                    class=""/>
+                            {% endimage %}
+                        </div>
+                        <div class="content">
+                            <a class="header">Calcifer</a>
+
+                            <div class="description">
+                                Gezeichnet von <a
+                                        href="http://simply-sylvan.deviantart.com/art/Calcifer-Purple-176746086">simply-Sylvan</a>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="thirteen wide column">
+                    <p>Calcifer ist ein Daemon aus dem Anime <a
+                                href="http://anidb.net/perl-bin/animedb.pl?show=anime&amp;aid=1218">„Das wandelnde
+                            Schloss“</a>,
+                        der sich darum kümmert das sich Howls Schloss weiter bewegt. Diese Terminverwaltung soll dafür
+                        sorgen
+                        das sich der <a href="https://www.krautspace.de/">Hackspace Jena</a> auch weiter bewegt und
+                        viele tolle
+                        Termine statfinden.</p>
+
+                    <p>
+                        Die Software wurde mit <a href="http://symfony.com/">Symfony2</a> und <a href="http://semantic-ui.com/">Semantic UI</a> gestrickt. Den
+                        Quellcode findest du auf der <a href="https://phablab.krautspace.de/diffusion/C/">Phabricator
+                            Instanz</a> des
+                        Hackspace Jena oder auf <a href="https://github.com/HackspaceJena/calcifer">Github</a>.
+                    </p>
+
+                    <p>
+                        Solltest du Probleme mit Calcifer haben, kannst du entweder über <a
+                                href="https://phablab.krautspace.de/maniphest/task/create/">Phabricator</a> oder <a
+                                href="https://github.com/HackspaceJena/calcifer/issues/new">Github</a> ein Ticket
+                        anlegen.
+                        Alternativ kannst du auch im <a href="https://www.krautspace.de/chat/index.html">Chat des
+                            Hackspace
+                            Jena</a> Probleme melden.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

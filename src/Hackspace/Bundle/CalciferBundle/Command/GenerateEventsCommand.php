@@ -38,15 +38,16 @@ class GenerateEventsCommand extends ContainerAwareCommand
             $now = new \DateTime();
             $end = new \DateTime();
             $end->add($duration);
-            $output->writeln(sprintf("Generating Dates from %s to %s",$now->format('Y-m-d'),$end->format('Y-m-d')));
-            $output->writeln("Fetching repeating events");
             /** @var EntityManager $entityManager */
             $entityManager = $this->getContainer()->get('doctrine')->getManager();
             $repo = $entityManager->getRepository('CalciferBundle:RepeatingEvent');
-            $entities = $repo->findAll();
+            $entities = $repo->findBy([],['id' => 'asc']);
             foreach($entities as $entity) {
                 /** @var RepeatingEvent $entity */
                 $next_date = is_null($entity->nextdate) ? new DateTime() : $entity->nextdate;
+                /** This is a fuggly hack. It would be best to store the named timezone also in the
+                 *  database to avoid problems with daylight savings.  */
+                $next_date->setTimezone(new \DateTimeZone('Europe/Berlin'));
                 $parser = new RelativeDateParser($entity->repeating_pattern,$next_date,'de');
                 $event = null;
                 while (($next_date = $parser->getNext()) < $end) {
@@ -56,7 +57,7 @@ class GenerateEventsCommand extends ContainerAwareCommand
                     $event->location = $entity->location;
                     $event->startdate = $next_date;
                     if ($entity->duration > 0) {
-                        $duration = new \DateInterval("PT".$entity->duration.'H');
+                        $duration = new \DateInterval("PT".$entity->duration.'M');
                         /** @var \DateTime $enddate */
                         $enddate = clone $next_date;
                         $enddate->add($duration);
