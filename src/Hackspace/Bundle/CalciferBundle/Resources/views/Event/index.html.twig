@@ -41,8 +41,11 @@
                         class="ui icon edit green link" data-content="Ort bearbeiten"
                         title="Ort bearbeiten"></i> </a> {% endif %}
         </h1>
-        {% if tag|default(false) %}
-            <a href="{{ path('tag_show',{'slug' : tag.slug }) }}.ics"><i class="icon calendar"></i>Link zur
+        {% if tags|length == 1 %}
+            <a href="{{ path('tag_show',{'slug' : tags[0].slug }) }}.ics"><i class="icon calendar"></i>Link zur
+                Kalenderdatei</a>
+        {% elseif(tags|length > 1) %}
+            <a href="/tags/{% for tag in tags %}{{ tag.slug }}{% if not loop.last %}{% if operator == 'or' %}%7C{% elseif(operator == 'and') %}%26{% endif %}{% endif %}{% endfor %}.ics"><i class="icon calendar"></i>Link zur
                 Kalenderdatei</a>
         {% endif %}
         {% if location|default(false) %}
