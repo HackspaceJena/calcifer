@@ -5,17 +5,7 @@ namespace Hackspace\Bundle\CalciferBundle\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
-use Jsvrcek\ICS\Model\Description\Location As EventLocation;
 use Symfony\Component\Validator\Constraints\DateTime;
-use Jsvrcek\ICS\Model\Calendar;
-use Jsvrcek\ICS\Model\CalendarEvent;
-use Jsvrcek\ICS\Model\Relationship\Attendee;
-use Jsvrcek\ICS\Model\Relationship\Organizer;
-
-use Jsvrcek\ICS\Utility\Formatter;
-use Jsvrcek\ICS\CalendarStream;
-use Jsvrcek\ICS\CalendarExport;
-use Jsvrcek\ICS\Model\Description\Geo;
 
 /**
  * Event
@@ -144,32 +134,30 @@ class Event extends BaseEntity
 
 
     public function ConvertToCalendarEvent() {
-        $event = new CalendarEvent();
-        $event->setStart($this->startdate);
-        if ($this->enddate instanceof \DateTime)
-            $event->setEnd($this->enddate);
-        $event->setSummary($this->summary);
-        $event->setUrl($this->url);
-        $uid = sprintf("https://%s/termine/%s",$_SERVER['HTTP_HOST'],$this->slug);
-        $event->setUid($uid);
-        if (count($this->tags) > 0) {
-            $categories = [];
-            foreach($this->tags as $tag) {
-                $event->addCategory($tag->name);
-            }
+        $categories = [];
+        foreach($this->tags as $tag) {
+            $categories[] = $tag->name;
         }
+
+        $event = [
+            "VEVENT" => [
+                'SUMMARY' => $this->summary,
+                'DTSTART' => $this->startdate,
+                'DESCRIPTION' => $this->description,
+                'URL' => $this->url,
+                'CATEGORIES' => $categories,
+            ]
+        ];
+        if (!is_null($this->enddate))
+            $event["VEVENT"]["DTEND"] = $this->enddate;
+
         if ($this->location instanceof Location) {
-            $location = new EventLocation();
-            $location->setName($this->location->name);
-            $event->setLocations([$location]);
+            $event["VEVENT"]["LOCATION"] = $this->location->name;
             if (\is_float($this->location->lon) && \is_float($this->location->lat)) {
-                $geo = new Geo();
-                $geo->setLatitude($this->location->lat);
-                $geo->setLongitude($this->location->lon);
-                $event->setGeo($geo);
+                $event["VEVENT"]["GEO"] = [$this->location->lat, $this->location->lon];
             }
         }
-        $event->setDescription($this->description);
+
         return $event;
     }
 }

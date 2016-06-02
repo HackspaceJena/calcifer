@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Hackspace\Bundle\CalciferBundle\Entity\Location;
 use Hackspace\Bundle\CalciferBundle\Entity\Tag;
-use Jsvrcek\ICS\Model\Description\Geo;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -16,17 +15,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Hackspace\Bundle\CalciferBundle\Entity\Event;
 use Hackspace\Bundle\CalciferBundle\Form\EventType;
 use Symfony\Component\HttpFoundation\Response;
-use Jsvrcek\ICS\Model\Calendar;
-use Jsvrcek\ICS\Model\CalendarEvent;
-use Jsvrcek\ICS\Model\Relationship\Attendee;
-use Jsvrcek\ICS\Model\Relationship\Organizer;
-
-use Jsvrcek\ICS\Utility\Formatter;
-use Jsvrcek\ICS\CalendarStream;
-use Jsvrcek\ICS\CalendarExport;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Symfony\Component\HttpFoundation\AcceptHeader;
+
+use Sabre\VObject;
 
 /**
  * Tag controller.
@@ -143,23 +136,14 @@ EOF;
         }
 
         if ($format == 'ics') {
-            $calendar = new Calendar();
-            $calendar->setProdId('-//My Company//Cool Calendar App//EN');
-            $calendar->setTimeZone(new \DateTimeZone('Europe/Berlin'));
+            $vcalendar = new VObject\Component\VCalendar();
 
             foreach ($entities as $entity) {
-                /** @var Event $entity */
-                $event = $entity->ConvertToCalendarEvent();
-                $calendar->addEvent($event);
+                 /** @var Event $entity */
+                $vcalendar->add('VEVENT',$entity->ConvertToCalendarEvent());
             }
 
-            $calendarExport = new CalendarExport(new CalendarStream, new Formatter());
-            $calendarExport->addCalendar($calendar);
-
-            //output .ics formatted text
-            $result = $calendarExport->getStream();
-
-            $response = new Response($result);
+            $response = new Response($vcalendar->serialize());
             $response->headers->set('Content-Type', 'text/calendar');
 
             return $response;

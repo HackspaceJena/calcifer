@@ -15,19 +15,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Hackspace\Bundle\CalciferBundle\Entity\Event;
 use Hackspace\Bundle\CalciferBundle\Form\EventType;
 use Symfony\Component\HttpFoundation\Response;
-use Jsvrcek\ICS\Model\Calendar;
-use Jsvrcek\ICS\Utility\Formatter;
-use Jsvrcek\ICS\CalendarStream;
-use Jsvrcek\ICS\CalendarExport;
-use
-    Sabre\VObject,
-    Sabre\CalDAV,
-    Sabre\DAV,
-    Sabre\DAVACL,
-    Sabre\DAV\Exception\Forbidden,
-    Hackspace\Bundle\CalciferBundle\libs\CalciferCaldavBackend,
-    Hackspace\Bundle\CalciferBundle\libs\CalciferPrincipalBackend;
 
+use Sabre\VObject;
 /**
  * Event controller.
  *
@@ -35,45 +24,6 @@ use
  */
 class EventController extends Controller
 {
-    /**
-     * Finds and displays a Event entity.
-     *
-     * @Route("/{url}", name="events_caldav", requirements={"url" : "caldav(.+)"})
-     */
-    public function caldavEntry()
-    {
-        // Backends
-        $calendarBackend = new CalciferCaldavBackend($this);
-        $principalBackend = new CalciferPrincipalBackend();
-        // Directory structure
-        $tree = [
-            new CalDAV\CalendarRootNode($principalBackend, $calendarBackend),
-        ];
-
-        $server = new DAV\Server($tree);
-
-        $server->setBaseUri('/caldav');
-
-        /*$aclPlugin = new DAVACL\Plugin();
-        $aclPlugin->allowAccessToNodesWithoutACL = false;
-        $server->addPlugin($aclPlugin);*/
-
-        /* CalDAV support */
-        $caldavPlugin = new CalDAV\Plugin();
-        $server->addPlugin($caldavPlugin);
-
-        /* WebDAV-Sync plugin */
-        $server->addPlugin(new DAV\Sync\Plugin());
-
-// Support for html frontend
-        $browser = new DAV\Browser\Plugin();
-        $server->addPlugin($browser);
-
-// And off we go!
-        $server->exec();
-        return new Response();
-    }
-
     /**
      * Lists all Event entities as ICS.
      *
@@ -96,22 +46,14 @@ class EventController extends Controller
             ->setParameter('startdate', $now);
         $entities = $qb->getQuery()->execute();
 
-        $calendar = new Calendar();
-        $calendar->setProdId('-//My Company//Cool Calendar App//EN');
+        $vcalendar = new VObject\Component\VCalendar();
 
         foreach ($entities as $entity) {
-          /** @var Event $entity */
-          $event = $entity->ConvertToCalendarEvent();
-          $calendar->addEvent($event);
+            /** @var Event $entity */
+            $vcalendar->add('VEVENT',$entity->ConvertToCalendarEvent());
         }
 
-        $calendarExport = new CalendarExport(new CalendarStream, new Formatter());
-        $calendarExport->addCalendar($calendar);
-
-        //output .ics formatted text
-        $result = $calendarExport->getStream();
-
-        $response = new Response($result);
+        $response = new Response($vcalendar->serialize());
         $response->headers->set('Content-Type', 'text/calendar');
 
         return $response;

@@ -38,7 +38,7 @@
         "doctrine/doctrine-migrations-bundle": "dev-master",
         "jbroadway/urlify" : "~1.0",
         "enko/relativedateparser" : "0.5",
-        "sabre/dav" : "~2.0"
+        "sabre/vobject": "^4.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

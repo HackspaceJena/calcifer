@@ -16,12 +16,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Hackspace\Bundle\CalciferBundle\Entity\Event;
 use Hackspace\Bundle\CalciferBundle\Form\EventType;
 use Symfony\Component\HttpFoundation\Response;
-use Jsvrcek\ICS\Model\Calendar;
-use Jsvrcek\ICS\Utility\Formatter;
-use Jsvrcek\ICS\CalendarStream;
-use Jsvrcek\ICS\CalendarExport;
 use Symfony\Component\HttpFoundation\AcceptHeader;
 
+use Sabre\VObject;
 /**
  * Location controller.
  *
@@ -68,24 +65,15 @@ class LocationController extends Controller
         $entities = $qb->getQuery()->execute();
 
         if ($format == 'ics') {
-            $calendar = new Calendar();
-            $calendar->setProdId('-//My Company//Cool Calendar App//EN');
+            $vcalendar = new VObject\Component\VCalendar();
 
             foreach ($entities as $entity) {
-                /** @var Event $entity */
-                $event = $entity->ConvertToCalendarEvent();
-                $calendar->addEvent($event);
+                 /** @var Event $entity */
+                $vcalendar->add('VEVENT',$entity->ConvertToCalendarEvent());
             }
 
-            $calendarExport = new CalendarExport(new CalendarStream, new Formatter());
-            $calendarExport->addCalendar($calendar);
-
-            //output .ics formatted text
-            $result = $calendarExport->getStream();
-
-            $response = new Response($result);
+            $response = new Response($vcalendar->serialize());
             $response->headers->set('Content-Type', 'text/calendar');
-
             return $response;
         } else {
             return array(
