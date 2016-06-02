@@ -13,7 +13,7 @@
                 "name": "jquery/jquery",
                 "version": "1.10.2",
                 "dist": {
-                    "url": "http://code.jquery.com/jquery-1.10.2.js",
+                    "url": "https://code.jquery.com/jquery-1.10.2.js",
                     "type": "file"
                 }
             }
@@ -37,7 +37,7 @@
         "doctrine/migrations": "dev-master",
         "doctrine/doctrine-migrations-bundle": "dev-master",
         "jbroadway/urlify" : "~1.0",
-        "enko/relativedateparser" : "v0.5",
+        "enko/relativedateparser" : "0.5",
         "sabre/dav" : "~2.0"
     },
     "require-dev": {
