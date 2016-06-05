@@ -140,21 +140,19 @@ class Event extends BaseEntity
         }
 
         $event = [
-            "VEVENT" => [
-                'SUMMARY' => $this->summary,
-                'DTSTART' => $this->startdate,
-                'DESCRIPTION' => $this->description,
-                'URL' => $this->url,
-                'CATEGORIES' => $categories,
-            ]
+            'SUMMARY' => $this->summary,
+            'DTSTART' => $this->startdate,
+            'DESCRIPTION' => $this->description,
+            'URL' => $this->url,
+            'CATEGORIES' => $categories,
         ];
         if (!is_null($this->enddate))
-            $event["VEVENT"]["DTEND"] = $this->enddate;
+            $event["DTEND"] = $this->enddate;
 
         if ($this->location instanceof Location) {
-            $event["VEVENT"]["LOCATION"] = $this->location->name;
+            $event["LOCATION"] = $this->location->name;
             if (\is_float($this->location->lon) && \is_float($this->location->lat)) {
-                $event["VEVENT"]["GEO"] = [$this->location->lat, $this->location->lon];
+                $event["GEO"] = [$this->location->lat, $this->location->lon];
             }
         }
 
