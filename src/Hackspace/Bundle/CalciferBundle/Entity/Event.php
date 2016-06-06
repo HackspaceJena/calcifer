@@ -139,12 +139,14 @@ class Event extends BaseEntity
             $categories[] = $tag->name;
         }
 
+        $uid = sprintf("https://%s/termine/%s",$_SERVER['HTTP_HOST'],$this->slug);
         $event = [
             'SUMMARY' => $this->summary,
             'DTSTART' => $this->startdate,
             'DESCRIPTION' => $this->description,
             'URL' => $this->url,
             'CATEGORIES' => $categories,
+            'UID' => $uid,
         ];
         if (!is_null($this->enddate))
             $event["DTEND"] = $this->enddate;
