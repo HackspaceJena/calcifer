@@ -13,6 +13,12 @@ jQuery(document).ready(function () {
         jQuery('.icon.link').popup();
     }
 
+    $('.ui.sticky')
+        .sticky({
+            context: '#main'
+        })
+    ;
+
     if (jQuery('input[type=datetime]').length > 0) {
         jQuery('input[type=datetime]').datetimepicker({lang: 'de', format: 'Y-m-d H:i'});
     }
