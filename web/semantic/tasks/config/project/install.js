@@ -92,7 +92,6 @@ module.exports = {
           folder        = pathArray[pathArray.length - 1],
           nextDirectory = path.join(directory, path.sep, '..')
         ;
-        console.log(folder, nextDirectory);
         if( folder == 'bower_components') {
           return {
             name: 'Bower',
@@ -228,7 +227,7 @@ module.exports = {
     siteVariable: /@siteFolder .*\'(.*)/mg
   },
 
-  // source paths (relative to tasks/install.js )
+  // source paths (when installing)
   source: {
     config       : './semantic.json.example',
     definitions  : './src/definitions',
@@ -239,6 +238,7 @@ module.exports = {
     themeConfig  : './src/theme.config.example',
     themeImport  : './src/theme.less',
     themes       : './src/themes',
+    defaultTheme : './src/themes/default',
     userGulpFile : './tasks/config/npm/gulpfile.js'
   },
 
@@ -253,15 +253,17 @@ module.exports = {
 
   // folder paths to files relative to root
   folders: {
-    config      : './',
-    definitions : 'src/definitions/',
-    lessImport  : 'src/',
-    modules     : 'node_modules/',
-    site        : 'src/site/',
-    tasks       : 'tasks/',
-    themeConfig : 'src/',
-    themeImport : 'src/',
-    themes      : 'src/themes/'
+    config       : './',
+    definitions  : 'src/definitions/',
+    lessImport   : 'src/',
+    modules      : 'node_modules/',
+    site         : 'src/site/',
+    tasks        : 'tasks/',
+    themeConfig  : 'src/',
+    themeImport  : 'src/',
+    themes       : 'src/themes/',
+
+    defaultTheme : 'default/' // only path that is relative to another directory and not root
   },
 
   // questions asked during install
@@ -276,7 +278,7 @@ module.exports = {
           '    {packageMessage} \n' +
           '    \n' +
           '    Is this your project folder?\n' +
-          '    \033[92m{root}\033[0m \n' +
+          '    \x1b[92m{root}\x1b[0m \n' +
           '    \n ' +
           '\n',
         choices: [
@@ -352,6 +354,7 @@ module.exports = {
           { name: "reset", checked: true },
           { name: "site", checked: true },
           { name: "button", checked: true },
+          { name: "container", checked: true },
           { name: "divider", checked: true },
           { name: "flag", checked: true },
           { name: "header", checked: true },
@@ -381,6 +384,7 @@ module.exports = {
           { name: "checkbox", checked: true },
           { name: "dimmer", checked: true },
           { name: "dropdown", checked: true },
+          { name: "embed", checked: true },
           { name: "modal", checked: true },
           { name: "nag", checked: true },
           { name: "popup", checked: true },
@@ -392,7 +396,6 @@ module.exports = {
           { name: "sticky", checked: true },
           { name: "tab", checked: true },
           { name: "transition", checked: true },
-          { name: "video", checked: true },
           { name: "api", checked: true },
           { name: "form", checked: true },
           { name: "state", checked: true },
@@ -437,6 +440,10 @@ module.exports = {
             name: 'Yes',
             value: true
           },
+          {
+            name: 'Build Both',
+            value: 'both'
+          }
         ]
       },
       {
@@ -729,33 +736,20 @@ module.exports = {
     /* Copy Install Folders */
     wrench: {
 
-      // copy during npm update (default theme / definition)
-      update: {
+      // overwrite existing files update & install (default theme / definition)
+      overwrite: {
         forceDelete       : true,
         excludeHiddenUnix : true,
         preserveFiles     : false
       },
 
-      // copy during first npm install
-      install: {
-        forceDelete       : true,
-        excludeHiddenUnix : true,
-        preserveFiles     : false
-      },
-
-      // copy for node_modules
-      modules: {
-        forceDelete       : true,
-        excludeHiddenUnix : true,
-        preserveFiles     : false
-      },
-
-      // copy for site theme
-      site: {
+      // only create files that don't exist (site theme update)
+      merge: {
         forceDelete       : false,
         excludeHiddenUnix : true,
         preserveFiles     : true
       }
+
     }
   }
 

@@ -10,7 +10,7 @@
     "jquery"      : ">=1.8"
   },
   "main": [
-    "dist/semantic.css",
+    "src/semantic.less",
     "dist/semantic.js"
   ],
   "keywords": [
@@ -19,9 +19,7 @@
     "css3",
     "framework"
   ],
-  "license" : [
-    "http://semantic-ui.mit-license.org/"
-  ],
+  "license" : "MIT",
   "ignore": [
     "src/site",
     "test"

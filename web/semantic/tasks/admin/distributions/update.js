@@ -67,9 +67,6 @@ module.exports = function(callback) {
       outputDirectory      = path.resolve(path.join(release.outputRoot, distribution.toLowerCase() )),
       repoName             = release.distRepoRoot + distribution,
 
-      gitURL               = 'https://github.com/' + release.org + '/' + repoName + '.git',
-      repoURL              = 'https://github.com/' + release.org + '/' + repoName + '/',
-
       commitArgs = (oAuth.name !== undefined && oAuth.email !== undefined)
         ? '--author "' + oAuth.name + ' <' + oAuth.email + '>"'
         : '',
@@ -114,7 +111,7 @@ module.exports = function(callback) {
     function commitFiles() {
       // commit files
       console.info('Committing ' + distribution + ' files', commitArgs);
-      gulp.src('**/*', gitOptions)
+      gulp.src('./', gitOptions)
         .pipe(git.add(gitOptions))
         .pipe(git.commit(commitMessage, commitOptions))
         .on('error', function(error) {
