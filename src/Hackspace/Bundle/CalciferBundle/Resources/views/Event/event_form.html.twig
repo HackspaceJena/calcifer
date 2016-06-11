@@ -80,16 +80,37 @@
         </div>
     </div>
 
-    <div class="required field">
+    <div class="field">
         <label for="event_location">Ort</label>
 
         <div class="ui icon input attached-{% if entity.location.lat|default(0) > 0 %}geo-{% endif %}label">
-            <input type="text"
-                   id="event_location"
-                   name="location"
-                   maxlength="255"
-                   value="{{ entity.location.name|default('') }}"
-                   class="form-control">
+          <div id="event_location" class="ui fluid search selection dropdown">
+            <input type="hidden" name="location">
+              <div class="default text">
+                  {% if entity.location is null %}
+                      Wähle einen Ort…
+                  {% else %}
+                      <div class="ui fluid green card">
+                          <div class="content">
+                              <div class="header">
+                                  <i class="ui icon map marker"></i> {{ entity.location.name }}
+                                  </div>
+                              <div class="meta">
+                                  {%  if (not entity.location.lat is null) and (not entity.location.lon is null) %}
+                                      lon: {{ entity.location.lon }}, lat: {{ entity.location.lat }}
+                                  {% endif %}
+                                  {% if (not entity.location.streetaddress) %}
+                                    Anschrift: {{ entity.location.streetaddress }} {{ entity.location.streetnumber }} {{ entity.location.zipcode }} {{ entity.location.city }}
+                                  {% endif %}
+                                  </div>
+                              </div>
+                          </div>
+                  {% endif %}
+              </div>
+              <div class="menu">
+              </div>
+            </input>
+          </div>
             <input type="hidden" name="location_lat" value="{{ entity.location.lat|default('') }}">
             <input type="hidden" name="location_lon" value="{{ entity.location.lon|default('') }}">
             <i class="icon map marker"></i>
@@ -123,11 +144,17 @@
         <label for="event_tags">Tags</label>
 
         <div class="ui icon input">
-            <input type="text"
-                   id="event_tags"
-                   name="tags"
-                   value="{{ entity.getTagsAsText() }}"
-                   class="form-control">
+            <div class="ui fluid search multiple selection dropdown" id="event_tags">
+                <input name="tags" type="hidden" value="{{ entity.getTagsAsText()|default('') }}">
+
+                <div class="default text">Du kannst hier kommasepariert Tags angeben…</div>
+                <div class="menu">
+                    {% for tag in entity.tags %}
+                        <div class="item" data-value="{{ tag.name }}">{{ tag.name }}</div>
+                    {% endfor %}
+                </div>
+                </input>
+            </div>
             <i class="icon tag"></i>
         </div>
         <div class="ui label">Du kannst hier kommasepariert <a

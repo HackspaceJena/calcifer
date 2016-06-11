@@ -55,7 +55,7 @@ trait TagTrait
             }
             return implode(',', $tags);
         } else {
-            return '';
+            return null;
         }
     }
 } 

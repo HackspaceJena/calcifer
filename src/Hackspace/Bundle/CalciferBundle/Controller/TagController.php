@@ -186,8 +186,13 @@ EOF;
                 ];
             }
 
+            $retval = [
+                'success' => true,
+                'results' => $tags,
+            ];
 
-            $response = new Response(json_encode($tags));
+
+            $response = new Response(json_encode($retval));
             $response->headers->set('Content-Type', 'application/json');
 
             return $response;

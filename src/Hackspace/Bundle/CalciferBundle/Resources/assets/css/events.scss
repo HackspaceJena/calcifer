@@ -18,6 +18,34 @@
     height: auto;
     max-height: none;
   }
+
+  #event_location.ui.dropdown.active {
+    .text .ui.fluid.card {
+      opacity: 0.5;
+    }
+  }
+
+  #event_location.ui.dropdown {
+    input.search {
+      height: 100%;
+      line-height: 100%;
+      width: 100%;
+    }
+
+    .default.text {
+      color: black;
+    }
+
+    .text {
+      width: 100%;
+
+      .ui.fluid.card {
+        .description {
+          display: none;
+        }
+      }
+    }
+  }
 }
 
 #view-map, #map {

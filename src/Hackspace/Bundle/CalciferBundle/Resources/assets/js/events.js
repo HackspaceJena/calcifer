@@ -115,85 +115,71 @@ $(document).ready(function() {
     if (card_selector.length > 0) {
         calcBoxSize(4);
     }
+    
+    $location = $('#event_location');
 
-    $('#event_tags').selectize({
-	    create: true,
-        diacritics: true,
-        valueField: 'name',
-        labelField: 'name',
-        searchField: 'name',
-	    render: {
-    	    item: function(data,escape){
-        		console.log([data,escape]);
-        		return '<div class="ui green compact small label"><i class="tag icon"></i>' + escape(data.name) + '</div>';
-    	    }
-    	},
-        load: function(query, callback) {
-            if (!query.length) return callback();
-            $.ajax({
-                url: "/tags/",
-                type: "GET",
-                dataType: 'json',
-                data: {
-                    q: query
+    if ($location.length == 1) {
+        $('#event_location')
+            .dropdown({
+                minCharacters: 4,
+                allowAdditions: true,
+                apiSettings: {
+                    url: '/orte/?q={query}'
                 },
-                error: function() {
-                  callback();
+                fields: {
+                    remoteValues : 'results', // grouping for api results
+                    values       : 'values', // grouping for all dropdown values
+                    name         : 'name',   // displayed dropdown text
+                    value        : 'name'   // actual dropdown value
                 },
-                success: function(res) {
-                    console.log(res);
-                    callback(res);
+                templates: {
+                    menu: function(response, fields) {
+                        var
+                        values = response[fields.values] || {},
+                        html   = ''
+                        ;
+                        $.each(values, function(index, option) {
+                            var item = option;
+                            html += '<div class="item" data-value="' + option[fields.value] + '"><div class="ui fluid green card">' +
+                                                 '<div class="content">'+
+                                                     '<div class="header">' +
+                                                         '<i class="ui icon map marker"></i>' + item.name +
+                                                     '</div>' +
+                                                     '<div class="meta">'+
+                                                     (item.lon && item.lat ? 'lon: '+ escape(item.lon)+' lat: ' + escape(item.lat) : '')+
+                                             (item.streetaddress ? ' Anschrift: ' + item.streetaddress + ' ' + item.streetnumber + ' ' + item.zipcode + ' ' + item.city : '')+
+                                                     '</div>'+
+                                                     (item.description ? '<div class="description">' + item.description + '</div>' : '') +
+                                                 '</div>'+
+                                             '</div></div>';
+                        });
+                        return html;
+                    }
                 }
-            });
-        }
-    });
+            })
+        ;
+    }
 
-    $('#event_location').selectize({
-        create: true,
-        diacritics: true,
-        valueField: 'name',
-        labelField: 'name',
-        searchField: 'name',
-        maxItems: 1,
-        render: {
-            item: function(data,escape){
-                console.log([data,escape]);
-                return '<div class="ui green compact small label"><i class="map marker icon"></i>' + escape(data.name) + '</div>';
-            },
-            option: function(item, escape) {
-                return '<div class="ui fluid green card">' +
-                    '<div class="content">'+
-                        '<div class="header">' +
-                            '<i class="ui icon map marker"></i>' + escape(item.name) +
-                        '</div>' +
-                        '<div class="meta">'+
-                        (item.lon && item.lat ? 'lon: '+ escape(item.lon)+' lat: ' + escape(item.lat) : '')+
-                (item.streetaddress ? ' Anschrift: ' + item.streetaddress + ' ' + item.streetnumber + ' ' + item.zipcode + ' ' + item.city : '')+
-                        '</div>'+
-                        (item.description ? '<div class="description">' + item.description + '</div>' : '') +
-                    '</div>'+
-                '</div>';
+    $('#event_tags')
+        .dropdown({
+                minCharacters: 2,
+                allowAdditions: true,
+                apiSettings: {
+                    url: '/tags/?q={query}'
+                },
+                fields: {
+                    remoteValues: 'results', // grouping for api results
+                    values: 'values', // grouping for all dropdown values
+                    name: 'name',   // displayed dropdown text
+                    value: 'name'   // actual dropdown value
+                }/*,
+                templates: {
+                    label: function (value, text) {
+                        return '<i class="tag icon"></i>' + text + '<i class="delete icon"></i>';
+                    }
+                }*/
             }
-        },
-        load: function(query, callback) {
-            if (!query.length) return callback();
-            $.ajax({
-                url: "/orte/",
-                type: "GET",
-                dataType: 'json',
-                data: {
-                    q: query
-                },
-                error: function() {
-                    callback();
-                },
-                success: function(res) {
-                    console.log(res);
-                    callback(res);
-                }
-            });
-        }
-    });
+        );
 
     if (view_map_selector.length == 1) {
         jQuery('.show_map').click(addGeoCoordinates);

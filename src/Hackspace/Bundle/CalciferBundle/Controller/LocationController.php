@@ -201,8 +201,13 @@ class LocationController extends Controller
                 );
             }
 
+            $retval = [
+                "success" => true,
+                "results" => $locations,
+            ];
 
-            $response = new Response(json_encode($locations));
+
+            $response = new Response(json_encode($retval));
             $response->headers->set('Content-Type', 'application/json');
 
             return $response;
