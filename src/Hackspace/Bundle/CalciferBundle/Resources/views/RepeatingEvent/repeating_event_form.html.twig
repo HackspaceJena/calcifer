@@ -157,6 +157,21 @@
             <div class="ui label">Du kannst hier kommasepariert <a
                         href="https://en.wikipedia.org/wiki/Tag_%28metadata%29">Tags</a> angeben.
             </div>
+        <div class="field oos">
+                <label class="control-label required" for="event_origin">Origin</label>
+                <div class="ui icon input" title="Origin URL (Screenreader: bitte leer lassen)">
+                    <input type="text"
+                           name="origin"
+                           id="event_origin"
+                           maxlength="255"
+                           value="{{ entity.origin|default('') }}"
+                           class="form-control">
+                    <i class="icon globe"></i>
+                    <div class="ui corner label">
+                        <i class="icon asterisk"></i>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <input type="submit" class="ui green button" value="Speichern"/>

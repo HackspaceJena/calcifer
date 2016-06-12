@@ -178,6 +178,9 @@ class RepeatingEventController extends Controller
 
     private function saveRepeatingEvent(Request $request, RepeatingEvent $entity)
     {
+        if ( $request->get('origin')) {
+            return false;
+        }
         $location = $request->get('location');
         $location_lat = $request->get('location_lat');
         $location_lon = $request->get('location_lon');
