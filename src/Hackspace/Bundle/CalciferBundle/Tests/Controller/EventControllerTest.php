@@ -2,6 +2,7 @@
 
 namespace Hackspace\Bundle\CalciferBundle\Tests\Controller;
 
+use Doctrine\ORM\Decorator\EntityManagerDecorator;
 use Doctrine\ORM\EntityRepository;
 use Hackspace\Bundle\CalciferBundle\Entity\Event;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
@@ -61,13 +62,25 @@ class EventControllerTest extends WebTestCase
 
         $this->assertGreaterThan(0,strlen($slug));
 
+        /** @var EntityManagerDecorator $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
 
         /** @var EntityRepository $repo */
         $repo = $em->getRepository('CalciferBundle:Event');
 
+        $qb = $em->createQueryBuilder();
+        $qb->select(array('e'))
+            ->from('CalciferBundle:Event', 'e')
+            ->innerJoin('e.tags','t')
+            ->innerJoin('e.location','l')
+            ->where('e.slug>= :slug')
+            ->setParameter('slug', $slug);
+        $entities = $qb->getQuery()->execute();
+
+        $this->assertCount(1,$entities);
+
         /** @var Event $entity */
-        $entity = $repo->findOneBy(['slug' => $slug]);
+        $entity = $entities[0];
 
         $this->assertInstanceOf('Hackspace\Bundle\CalciferBundle\Entity\Event', $entity);
 
@@ -76,6 +89,15 @@ class EventControllerTest extends WebTestCase
         $this->assertTrue($form["summary"]->getValue() == $entity->summary, "Summary equal");
         $this->assertTrue($form["url"]->getValue() == $entity->url, "URL equal");
         $this->assertTrue($form["description"]->getValue() == $entity->description, "Description equal");
+
+        $tags = explode(",",$form["tags"]->getValue());
+        foreach($entity->tags as $tag) {
+            $this->assertTrue(in_array($tag->name,$tags));
+        }
+
+        $this->assertTrue($form["location"]->getValue() == $entity->location->name);
+        $this->assertTrue($form["location_lat"]->getValue() == $entity->location->lat);
+        $this->assertTrue($form["location_lon"]->getValue() == $entity->location->lon);
 
     }
 }
