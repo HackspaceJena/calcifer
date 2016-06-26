@@ -4,4 +4,4 @@ php:
   - '7.0'
 install:
    - composer install
-script: bin/phpunit.bat -c app
+script: bin/phpunit -c app
