@@ -139,7 +139,12 @@ class Event extends BaseEntity
             $categories[] = $tag->name;
         }
 
-        $uid = sprintf("https://%s/termine/%s",$_SERVER['HTTP_HOST'],$this->slug);
+        if (array_key_exists('HTTP_HOST',$_SERVER)) {
+            $uid = sprintf("https://%s/termine/%s",$_SERVER['HTTP_HOST'],$this->slug);
+        } else {
+            $uid = sprintf("https://localhost/termine/%s",$this->slug);
+        }
+
         $event = [
             'SUMMARY' => $this->summary,
             'DTSTART' => $this->startdate,
@@ -156,6 +161,12 @@ class Event extends BaseEntity
             if (\is_float($this->location->lon) && \is_float($this->location->lat)) {
                 $event["GEO"] = [$this->location->lat, $this->location->lon];
             }
+        }
+        if (!array_key_exists('HTTP_HOST',$_SERVER)) {
+            $dtstamp = new \DateTime();
+            $dtstamp->setDate(2016,06,27);
+            $dtstamp->setTime(0,0,0);
+            $event['DTSTAMP'] = $dtstamp;
         }
 
         return $event;

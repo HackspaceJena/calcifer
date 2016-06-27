@@ -100,4 +100,40 @@ class EventControllerTest extends WebTestCase
         $this->assertTrue($form["location_lon"]->getValue() == $entity->location->lon);
 
     }
+
+    public function testICS() {
+        $this->testPostEventForm();
+
+        $client = static::makeClient();
+
+        // events_ics
+
+        $url = $client->getContainer()->get('router')->generate('events_ics');
+
+        $crawler = $client->request('GET', $url);
+        $this->assertStatusCode(200, $client);
+
+        $test_doc = <<<EOF
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sabre//Sabre VObject 4.1.0//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:https://localhost/termine/testevent
+DTSTAMP;TZID=Europe/Berlin:20160627T000000
+SUMMARY:Testevent
+DTSTART;TZID=Europe/Berlin:20160628T000000
+DESCRIPTION:Testdescription
+URL;VALUE=URI:https://calcifer.datenknoten.me
+CATEGORIES:foo,bar,krautspace
+DTEND;TZID=Europe/Berlin:20160628T020000
+LOCATION:Krautspace
+GEO:1;2
+END:VEVENT
+END:VCALENDAR
+
+EOF;
+        
+        $this->assertEquals($test_doc, $client->getResponse()->getContent());
+    }
 }
