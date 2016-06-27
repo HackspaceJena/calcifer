@@ -37,6 +37,9 @@ class EventControllerTest extends WebTestCase
         $now = new \DateTime();
         $now->setTime(0,0,0);
 
+        $tz = new \DateTimeZone("Europe/Berlin");
+        $now->setTimezone($tz);
+
         $dateformat = "Y-m-d H:i";
         $startdate = clone $now;
         $startdate->add(new \DateInterval("P1D"));
@@ -133,7 +136,7 @@ END:VEVENT
 END:VCALENDAR
 
 EOF;
-        
+
         $this->assertEquals($test_doc, $client->getResponse()->getContent());
     }
 }
