@@ -1,8 +1,17 @@
 language: php
+
 php:
   - '5.6'
   - '7.0'
+
+services:
+  - postgresql
+
 install:
    - composer install
-script: bin/phpunit -c app
-before_script: phpenv config-add .travis-php-config.ini
+
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
+  - cp app/config/config_travis.yml app/config/config_test.yml
+
+script: bin/phpunit --verbose -c app

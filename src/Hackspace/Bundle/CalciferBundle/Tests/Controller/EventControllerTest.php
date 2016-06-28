@@ -2,6 +2,7 @@
 
 namespace Hackspace\Bundle\CalciferBundle\Tests\Controller;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\Decorator\EntityManagerDecorator;
 use Doctrine\ORM\EntityRepository;
 use Hackspace\Bundle\CalciferBundle\Entity\Event;
@@ -9,23 +10,60 @@ use Liip\FunctionalTestBundle\Test\WebTestCase;
 
 class EventControllerTest extends WebTestCase
 {
+    /** @var \DateTime */
+    private $now = null;
 
-    private function initClient() {
-        $this->loadFixtures([]);
+    /** @var \DateTime */
+    private $startdate = null;
 
-        $client = static::makeClient();
-        return $client;
+    /** @var \DateTime */
+    private $enddate = null;
+
+    const dateformat = "Y-m-d H:i";
+
+    /**
+     * EventControllerTest constructor.
+     */
+    public function __construct($name = null, array $data = [], $dataName = '')
+    {
+        parent::__construct($name,$data,$dataName);
+        $this->now = new \DateTime();
+        $this->now->setTime(0,0,0);
+
+        $tz = new \DateTimeZone("Europe/Berlin");
+        $this->now->setTimezone($tz);
+
+        $this->startdate = clone $this->now;
+        $this->startdate->add(new \DateInterval("P1D"));
+        $this->enddate = clone $this->now;
+        $this->enddate->add(new \DateInterval("P1DT2H"));
+
     }
 
+    public static function runCommandStatic($name) {
+        $command = sprintf("php app/console %s", $name);
+        $output = "";
+        exec($command,$output);
+        return $output;
+    }
+
+    public static function setUpBeforeClass()
+    {
+        EventControllerTest::runCommandStatic("doctrine:database:drop --force --env=test");
+        EventControllerTest::runCommandStatic("doctrine:database:create --env=test");
+        EventControllerTest::runCommandStatic("doctrine:schema:create --env=test");
+    }
+
+
     public function testEmptyListing() {
-        $client = $this->initClient();
+        $client = static::makeClient();
         $crawler = $client->request('GET', '/');
         $this->assertStatusCode(200, $client);
     }
 
     public function testPostEventForm()
     {
-        $client = $this->initClient();
+        $client = static::makeClient();
 
         $url = $client->getContainer()->get('router')->generate('_new');
 
@@ -34,19 +72,11 @@ class EventControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('save')->form();
 
-        $now = new \DateTime();
-        $now->setTime(0,0,0);
 
-        $tz = new \DateTimeZone("Europe/Berlin");
-        $now->setTimezone($tz);
 
-        $dateformat = "Y-m-d H:i";
-        $startdate = clone $now;
-        $startdate->add(new \DateInterval("P1D"));
-        $enddate = clone $now;
-        $enddate->add(new \DateInterval("P1DT2H"));
-        $form['startdate'] = $startdate->format("Y-m-d H:i");
-        $form['enddate'] = $enddate->format("Y-m-d H:i");
+
+        $form['startdate'] = $this->startdate->format(EventControllerTest::dateformat);
+        $form['enddate'] = $this->enddate->format(EventControllerTest::dateformat);
         $form['summary'] = "Testevent";
         $form['url'] = "https://calcifer.datenknoten.me";
         $form["location"] = "Krautspace";
@@ -87,8 +117,8 @@ class EventControllerTest extends WebTestCase
 
         $this->assertInstanceOf('Hackspace\Bundle\CalciferBundle\Entity\Event', $entity);
 
-        $this->assertTrue($startdate == $entity->startdate, "Startdate equal");
-        $this->assertTrue($enddate == $entity->enddate, "Enddate equal");
+        $this->assertTrue($this->startdate == $entity->startdate, "Startdate equal");
+        $this->assertTrue($this->enddate == $entity->enddate, "Enddate equal");
         $this->assertTrue($form["summary"]->getValue() == $entity->summary, "Summary equal");
         $this->assertTrue($form["url"]->getValue() == $entity->url, "URL equal");
         $this->assertTrue($form["description"]->getValue() == $entity->description, "Description equal");
@@ -102,10 +132,17 @@ class EventControllerTest extends WebTestCase
         $this->assertTrue($form["location_lat"]->getValue() == $entity->location->lat);
         $this->assertTrue($form["location_lon"]->getValue() == $entity->location->lon);
 
+        $em->close();
+
+        /** @var Registry $doc */
+        $doc = $this->getContainer()->get('doctrine');
+
+        foreach($doc->getConnections() as $connection) {
+            $connection->close();
+        }
     }
 
     public function testICS() {
-        $this->testPostEventForm();
 
         $client = static::makeClient();
 
@@ -125,18 +162,31 @@ BEGIN:VEVENT
 UID:https://localhost/termine/testevent
 DTSTAMP;TZID=Europe/Berlin:20160627T000000
 SUMMARY:Testevent
-DTSTART;TZID=Europe/Berlin:20160628T000000
+DTSTART:%s
 DESCRIPTION:Testdescription
 URL;VALUE=URI:https://calcifer.datenknoten.me
 CATEGORIES:foo,bar,krautspace
-DTEND;TZID=Europe/Berlin:20160628T020000
+DTEND:%s
 LOCATION:Krautspace
 GEO:1;2
 END:VEVENT
 END:VCALENDAR
 
 EOF;
+        $new_tz = new \DateTimeZone("UTC");
+        $this->startdate->setTimezone($new_tz);
+        $this->enddate->setTimezone($new_tz);
+        $start = $this->startdate->format("Ymd") . "T" . $this->startdate->format("His") . "Z";
+        $end = $this->enddate->format("Ymd") . "T" . $this->enddate->format("His") . "Z";
 
-        $this->assertEquals($test_doc, $client->getResponse()->getContent());
+        $test_doc = sprintf($test_doc,$start,$end);
+
+        $content = $client->getResponse()->getContent();
+
+        $content = preg_replace('~\R~u', "\r\n", $content);
+        $test_doc = preg_replace('~\R~u', "\r\n", $test_doc);
+
+        $this->assertGreaterThan(0,strlen($content));
+        $this->assertEquals($test_doc, $content);
     }
 }
