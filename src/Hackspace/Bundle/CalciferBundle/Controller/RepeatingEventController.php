@@ -49,6 +49,28 @@ class RepeatingEventController extends Controller
     }
 
     /**
+     * Displays all repeating events
+     *
+     * @Route("/logs", name="repeating_event_logs")
+     * @Method("GET")
+     * @Template()
+     */
+    public function logIndexAction()
+    {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var EntityRepository $repo */
+        $repo = $em->getRepository('CalciferBundle:RepeatingEventLogEntry');
+
+        $entities = $repo->findBy([], ['event_startdate' => 'DESC']);
+
+        return [
+            'entities' => $entities,
+        ];
+    }
+
+    /**
      *  Displays a form to create a repeating event
      *
      * @Route("/neu", name="repeating_event_new")

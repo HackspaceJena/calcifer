@@ -1,0 +1,58 @@
+{% extends 'CalciferBundle::layout.html.twig' %}
+
+{% block css %}
+    {% stylesheets filter="compass"
+    "@CalciferBundle/Resources/assets/css/events.scss" %}
+    <link rel="stylesheet" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+    "@CalciferBundle/Resources/assets/js/events.js" %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block body -%}
+    <div class="ui basic segment">
+        <h1 class="ui green block dividing header">
+            Logeinträge für Wiederholende Termine
+        </h1>
+    </div>
+
+    <div class="ui basic segment">
+        <table class="ui table">
+            <thead>
+            <tr>
+                <th>Wiederholender Termin</th>
+                <th>Termin</th>
+                <th>Termin Startdatum</th>
+                <th>Termin Enddatum</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entity in entities %}
+                <tr>
+                    <td>
+                        {{ entity.repeating_event.summary }}
+                    </td>
+                    <td>
+                        <a href="{{ path('_show', {'slug':entity.event.slug}) }}">{{ entity.event.summary }}</a>
+                    </td>
+                    <td>
+                        {{ entity.event_startdate.format('Y-m-d H:i') }}
+                    </td>
+                    <td>
+                        {% if entity.event_enddate %}
+                            {{ entity.event_enddate.format('Y-m-d H:i') }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock %}

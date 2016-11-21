@@ -12,6 +12,7 @@ namespace Hackspace\Bundle\CalciferBundle\Command;
 use Doctrine\ORM\EntityManager;
 use Hackspace\Bundle\CalciferBundle\Entity\Event;
 use Hackspace\Bundle\CalciferBundle\Entity\RepeatingEvent;
+use Hackspace\Bundle\CalciferBundle\Entity\RepeatingEventLogEntry;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -52,7 +53,6 @@ class GenerateEventsCommand extends ContainerAwareCommand
                 $event = null;
                 while (($next_date = $parser->getNext()) < $end) {
                     /** @var \DateTime $next_date */
-                    $output->writeln(sprintf("Creating Event %s for %s",$entity->summary,$next_date->format('Y-m-d H:i')));
                     $event = new Event();
                     $event->location = $entity->location;
                     $event->startdate = $next_date;
@@ -75,6 +75,12 @@ class GenerateEventsCommand extends ContainerAwareCommand
                         $event->addTag($tag);
                     }
                     $entityManager->persist($event);
+                    $logEntry = new RepeatingEventLogEntry();
+                    $logEntry->event = $event;
+                    $logEntry->repeating_event = $entity;
+                    $logEntry->event_startdate = $event->startdate;
+                    $logEntry->event_enddate = $event->enddate;
+                    $entityManager->persist($logEntry);
                     $entityManager->flush();
                     $parser->setNow($next_date);
                 }
