@@ -156,7 +156,7 @@ class EventControllerTest extends WebTestCase
         $test_doc = <<<EOF
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Sabre//Sabre VObject 4.1.0//EN
+PRODID:-//Sabre//Sabre VObject 4.1.1//EN
 CALSCALE:GREGORIAN
 BEGIN:VEVENT
 UID:https://localhost/termine/testevent
