@@ -15,3 +15,11 @@ before_script:
   - cp app/config/config_travis.yml app/config/config_test.yml
 
 script: bin/phpunit --verbose -c app
+
+notifications:
+    webhooks:
+        urls:
+            - "https://scalar.vector.im/api/neb/services/hooks/dHJhdmlzLWNpLyU0MDB4QUZGRSUzQW1hdHJpeC5vcmcvJTIxaWtsaVpGWGd0a1dWVW1FUmRQJTNBbWF0cml4Lm9yZw"
+        on_success: change  # always|never|change
+        on_failure: always
+        on_start: never
