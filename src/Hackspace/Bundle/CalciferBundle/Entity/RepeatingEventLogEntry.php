@@ -35,7 +35,7 @@ class RepeatingEventLogEntry extends BaseEntity
      * @var RepeatingEvent
      *
      * @ORM\ManyToOne(targetEntity="RepeatingEvent")
-     * @ORM\JoinColumn(name="repeating_events_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="repeating_events_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $repeating_event;
 
